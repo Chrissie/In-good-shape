@@ -47,11 +47,11 @@ void rotate(int x, int y)
 {
 	float deltaX = oldX - x;
 	float deltaY = oldY - y;
-	float fX = deltaX / x;
-	float fY = deltaY / y;
+	float speedY = deltaX / x;
+	float speedX = deltaY / y;
 
-	rotationY -= deltaTime * 18000 * fX;
-	rotationX -= deltaTime * 18000 * fY;
+	rotationY -= deltaTime * 18000 * speedY;
+	rotationX -= deltaTime * 18000 * speedX;
 }
 
 void mouseMotion(int x, int y)
@@ -63,7 +63,12 @@ void mouseMotion(int x, int y)
 
 	oldX = x;
 	oldY = y;
-	
+}
+
+void mouseMotionTrack(int x, int y)
+{
+	oldX = x;
+	oldY = y;
 }
 
 void moveCube(int key, int x, int y)
@@ -207,7 +212,8 @@ int main(int argc, char* argv[])
 
 	glutSpecialFunc(moveCube);
 
-	glutPassiveMotionFunc(mouseMotion);
+	glutMotionFunc(mouseMotion);
+	glutPassiveMotionFunc(mouseMotionTrack);
 
 	glEnable(GL_DEPTH_TEST);
 
