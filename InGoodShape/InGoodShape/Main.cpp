@@ -9,8 +9,6 @@ int height = 1080;
 float rotationX = 0;
 float rotationY = 0;
 float deltaTime;
-float mouseSpeedX = 0;
-float mouseSpeedY = 0;
 
 int xPos = 0;
 int yPos = 0;
@@ -47,31 +45,19 @@ void keyboardUp(unsigned char key, int x, int y)
 
 void rotate(int x, int y)
 {
-	if (x < oldX )
-	{
-		rotationY -= deltaTime * 180;
-	}
-	if (x > oldX)
-	{
-		rotationY += deltaTime * 180;
-	}
-	if (y < oldY)
-	{
-		rotationX -= deltaTime * 180;
-	}
-	if (y > oldY)
-	{
-		rotationX += deltaTime * 180;
-	}
+	float deltaX = oldX - x;
+	float deltaY = oldY - y;
+	float fX = deltaX / x;
+	float fY = deltaY / y;
+
+	rotationY -= deltaTime * 18000 * fX;
+	rotationX -= deltaTime * 18000 * fY;
 }
 
 void mouseMotion(int x, int y)
 {
 	float deltaX = oldX - x;
 	float deltaY = oldY - y;
-
-	mouseSpeedX = (deltaX / deltaTime)/100;
-	mouseSpeedY = (deltaY / deltaTime)/100;
 	
 	rotate(x, y);
 
