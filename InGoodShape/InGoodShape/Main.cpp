@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <cmath>
 
-int width = 1920;
-int height = 1080;
+int width = 800;
+int height = 600;
 
 float rotationX = 0;
 float rotationY = 0;
