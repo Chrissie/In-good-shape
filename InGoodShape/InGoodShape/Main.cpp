@@ -2,6 +2,15 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include "GameObject.h"
+#include "CubeComponent.h"
+#include "SpinComponent.h"
+#include "MenuComponent.h"
+#include "PyramidComponent.h"
+#include <chrono>
+
+int mouseX = 0;
+int mouseY = 0;
 
 int width = 1920;
 int height = 1080;
@@ -20,6 +29,7 @@ float oldY = 0;
 
 bool keys[256];
 
+std::list<GameObject*> objects;
 
 void reshape(int w, int h)
 {
@@ -96,6 +106,41 @@ void moveCube(int key, int x, int y)
 	}
 }
 
+void init()
+{
+	glEnable(GL_DEPTH_TEST);
+
+	GameObject* instructionButton = new GameObject();
+	instructionButton->addComponent(new CubeComponent(0.5));
+	instructionButton->addComponent(new MenuComponent("INSTRUCTIONS"));
+	instructionButton->position = Vec3f(0, 2, 0);
+	objects.push_back(instructionButton);
+
+	GameObject* startButton = new GameObject();
+	startButton->addComponent(new CubeComponent(0.5));
+	startButton->addComponent(new MenuComponent("START"));
+	startButton->position = Vec3f(0, 0, 0);
+	objects.push_back(startButton);
+
+	GameObject* optionsButton = new GameObject();
+	optionsButton->addComponent(new CubeComponent(0.5));
+	optionsButton->addComponent(new MenuComponent("OPTIONS"));
+	optionsButton->position = Vec3f(0, -2, 0);
+	objects.push_back(optionsButton);
+
+	//GameObject* exitButton = new GameObject();
+	//exitButton->addComponent(new CubeComponent(0.5));
+	//exitButton->addComponent(new MenuComponent("EXIT"));
+	//exitButton->position = Vec3f(0, -4, 0);
+	//objects.push_back(exitButton);
+
+	GameObject* exitButton = new GameObject();
+	exitButton->addComponent(new PyramidComponent(1, 2));
+	exitButton->addComponent(new SpinComponent(25));
+	exitButton->addComponent(new MenuComponent("EXIT"));
+	exitButton->position = Vec3f(0, -4, 0);
+	objects.push_back(exitButton);
+}
 
 void drawCube()
 {
@@ -156,7 +201,7 @@ void display()
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(0, 5, 5,
+	gluLookAt(0, 0, 5,
 		0, 0, 0,
 		0, 1, 0);
 
@@ -177,6 +222,8 @@ void display()
 		rotationY += deltaTime * 180;
 	}
 
+	for (auto &o : objects)
+		o->draw();
 
 	//draw cube
 	glPushMatrix();
@@ -186,7 +233,6 @@ void display()
 	glRotatef(rotationX, 1, 0, 0);
 	glRotatef(rotationY, 0, 1, 0);
 	glTranslatef(-0.5, -0.5, 0.5);
-
 
 	drawCube();
 	glPopMatrix();
@@ -203,9 +249,19 @@ void idle()
 	deltaTime = (currentTime - lastTime) / 1000.0f;
 	lastTime = currentTime;
 
+	for (auto &o : objects)
+		o->update(deltaTime);
+
 	glutPostRedisplay();
 }
 
+void mouseClick(int button, int state, int x, int y)
+{
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		mouseX = x;
+		mouseY = y;
+	}
+}
 
 int main(int argc, char* argv[])
 {
@@ -218,12 +274,14 @@ int main(int argc, char* argv[])
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
-
+	glutMouseFunc(mouseClick);
 	glutSpecialFunc(moveCube);
 
 	glutPassiveMotionFunc(mouseMotion);
 
 	glEnable(GL_DEPTH_TEST);
+
+	init();
 
 	glutMainLoop();
 
