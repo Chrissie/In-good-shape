@@ -8,6 +8,8 @@
 // GLFW
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3.h>
+
+#include <GL/freeglut.h>
 // GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -31,21 +33,19 @@ struct Character {
 
 std::map<GLchar, Character> Characters;
 GLuint VAO, VBO;
+Shader* shader;
 
-void RenderText(Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+void display();
+void idle();
 
 // The MAIN function, from here we start our application and run the Game loop
-int main()
+int main(int argc, char* argv[])
 {
-	// Init GLFW
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "IN GOOD SHAPE", nullptr, nullptr); // Windowed
-	glfwMakeContextCurrent(window);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+	glutInitWindowSize(WIDTH, HEIGHT);
+	glutInit(&argc, argv);
+	glutCreateWindow("In Good Shape");
 
 	// Initialize GLEW to setup the OpenGL Function pointers
 	glewExperimental = GL_TRUE;
@@ -60,11 +60,11 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Compile and setup the shader
-	Shader shader("shaders/text.vs", "shaders/text.frag");
+	shader = new Shader("shaders/text.vs", "shaders/text.frag");
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(WIDTH), 0.0f, static_cast<GLfloat>(HEIGHT));
-	shader.use();
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	glUniform1i(glGetUniformLocation(shader.ID, "fontAtlas"), 0);
+	shader->use();
+	glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	glUniform1i(glGetUniformLocation(shader->ID, "fontAtlas"), 0);
 
 	// FreeType
 	FT_Library ft;
@@ -126,7 +126,6 @@ int main()
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 
-
 	// Configure VAO/VBO for texture quads
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -138,31 +137,24 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	// Game loop
-	while (!glfwWindowShouldClose(window))
-	{
-		// Check and call events
-		glfwPollEvents();
-
-		// Clear the colorbuffer
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		RenderText(shader, "In Good Shape", 10.0f, 10.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-		// Swap the buffers
-		glfwSwapBuffers(window);
-	}
-
-	glfwTerminate();
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
+	glEnable(GL_DEPTH_TEST);
+	
+	glutMainLoop();
 	return 0;
 }
 
-void RenderText(Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+void idle()
+{
+	glutPostRedisplay();
+}
+
+void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 	// Activate corresponding render state	
-	shader.use();
-	glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
+	shader->use();
+	glUniform3f(glGetUniformLocation(shader->ID, "textColor"), color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
 
@@ -201,4 +193,13 @@ void RenderText(Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat 
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void display()
+{
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	RenderText("In Good Shape", 10.0f, 10.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	glutSwapBuffers();
 }
