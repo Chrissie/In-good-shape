@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 
 	// Set size to load glyphs as
-	FT_Set_Pixel_Sizes(face, 0, 48);
+	FT_Set_Pixel_Sizes(face, 0, 96);
 
 	// Disable byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -200,6 +200,10 @@ void display()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	RenderText("In Good Shape", 10.0f, 10.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	RenderText("In Good Shape", 100.0f, HEIGHT / 1.4f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	RenderText("Instructions", WIDTH / 2.4f, HEIGHT / 1.8f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+	RenderText("Play", WIDTH / 2.4f, HEIGHT / 2.2f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+	RenderText("Options", WIDTH / 2.4f, HEIGHT / 2.7f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+	RenderText("Exit", WIDTH / 2.4f, HEIGHT / 3.4f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
 	glutSwapBuffers();
 }
