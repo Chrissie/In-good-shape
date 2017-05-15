@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace std;
+
 int width = 1920;
 int height = 1080;
 
@@ -19,6 +21,15 @@ float oldX = 0;
 float oldY = 0;
 
 bool keys[256];
+
+/* Various gamestates used for navigation */
+// TODO: Implement
+enum IGSStates {
+	S_MENU,
+	S_GAME,
+	S_SETTINGS,
+	S_EXIT
+};
 
 
 void reshape(int w, int h)
@@ -206,6 +217,43 @@ void idle()
 	glutPostRedisplay();
 }
 
+/*Navigate to a menu using the console (testing purpose)*/
+IGSStates startMenu() {
+	int choice;
+
+	cout << "============================\n";
+	cout << "1 - Start game\n";		// Game will be started
+	cout << "2 - Settings\n";		// Navigate to settings menu
+	cout << "3 - Exit\n";			// Exit program
+	cout << "Enter your choice and press return\n";
+	cout << "============================\n";
+
+	cin >> choice;
+
+	IGSStates state;
+	switch (choice) {
+		case 1:
+			state = S_GAME;
+			break;
+		case 2:
+			state = S_SETTINGS;
+			break;
+		case 3:
+			state = S_EXIT;
+			break;
+		default:
+			cout << "Not a valid choice\n";
+			cout << "Choose again\n";
+
+			cin >> choice;
+			break;
+	}
+	return state;
+}
+
+IGSStates startMenu(IGSStates menu) {
+	return menu;
+}
 
 int main(int argc, char* argv[])
 {
@@ -213,19 +261,40 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
-	glutDisplayFunc(display);
-	glutIdleFunc(idle);
-	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
-	glutKeyboardUpFunc(keyboardUp);
 
-	glutSpecialFunc(moveCube);
+	// Menucode testcode
+	IGSStates state = startMenu();		// Determine which menu is selected
 
-	glutPassiveMotionFunc(mouseMotion);
+	bool gameOn = true;
+	while (gameOn != false) {
+		switch (state) {
+			case S_GAME:
+				// Code to execute when game is started
+				cout << "Game has started\n";
+			
+				glutDisplayFunc(display);
+				glutIdleFunc(idle);
+				glutReshapeFunc(reshape);
+				glutKeyboardFunc(keyboard);
+				glutKeyboardUpFunc(keyboardUp);
+				glutSpecialFunc(moveCube);
+				glutPassiveMotionFunc(mouseMotion);
+				glEnable(GL_DEPTH_TEST);
+				break;
 
-	glEnable(GL_DEPTH_TEST);
+			case S_SETTINGS:
+				// Code to execute when settings is selected
+				cout << "No settings found\n";
+				break;
 
-	glutMainLoop();
+			case S_EXIT:
+				// Code to exit program
+				cout << "End of program\n";
+				gameOn = false;
+				break;
+		}
+		glutMainLoop();
+	}
 
 	return 0;
 }
