@@ -4,11 +4,15 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
 
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+// freeglut
 #include <GL/freeglut.h>
 
 // GLM
@@ -19,9 +23,14 @@
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+// openCV tools
+#include "opencv2/imgproc/imgproc.hpp" 
+#include "opencv2/highgui/highgui.hpp"
+#include "blobdetectionavans.h"
+
 // GL includes
 #include "Shader.h"
-
 #include "GameObject.h"
 #include "CubeComponent.h"
 #include "SpinComponent.h"
@@ -33,8 +42,8 @@
 int mouseX = 0;
 int mouseY = 0;
 
-int width = 800;
-int height = 600;
+int width = 1920;
+int height = 1080;
 
 float rotationX = 0;
 float rotationY = 0;
@@ -135,19 +144,19 @@ void init()
 	GameObject* instructionButton = new GameObject();
 	instructionButton->addComponent(new CubeComponent(0.5));
 	instructionButton->addComponent(new MenuComponent("INSTRUCTIONS"));
-	instructionButton->position = Vec3f(0, 2, 0);
+	instructionButton->position = ::Vec3f(0, 2, 0);
 	objects.push_back(instructionButton);
 
 	GameObject* startButton = new GameObject();
 	startButton->addComponent(new CubeComponent(0.5));
 	startButton->addComponent(new MenuComponent("START"));
-	startButton->position = Vec3f(0, 0, 0);
+	startButton->position = ::Vec3f(0, 0, 0);
 	objects.push_back(startButton);
 
 	GameObject* optionsButton = new GameObject();
 	optionsButton->addComponent(new CubeComponent(0.5));
 	optionsButton->addComponent(new MenuComponent("OPTIONS"));
-	optionsButton->position = Vec3f(0, -2, 0);
+	optionsButton->position = ::Vec3f(0, -2, 0);
 	objects.push_back(optionsButton);
 
 	//GameObject* exitButton = new GameObject();
@@ -156,12 +165,12 @@ void init()
 	//exitButton->position = Vec3f(0, -4, 0);
 	//objects.push_back(exitButton);
 
-	GameObject* exitButton = new GameObject();
-	exitButton->addComponent(new PyramidComponent(1, 2));
-	exitButton->addComponent(new SpinComponent(25));
-	exitButton->addComponent(new MenuComponent("EXIT"));
-	exitButton->position = Vec3f(0, -4, 0);
-	objects.push_back(exitButton);
+	//GameObject* exitButton = new GameObject();
+	//exitButton->addComponent(new PyramidComponent(1, 2));
+	//exitButton->addComponent(new SpinComponent(25));
+	//exitButton->addComponent(new MenuComponent("EXIT"));
+	//exitButton->position = Vec3f(0, -4, 0);
+	//objects.push_back(exitButton);
 }
 
 void drawCube()
@@ -259,9 +268,9 @@ void display()
 	drawCube();
 	glPopMatrix();
 
-	glPushMatrix();
-	text->RenderText("In Good Shape", 100.0f, height / 1.4f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	glPopMatrix();
+	text->RenderText("IN GOOD SHAPE", (width/2)-(width/6), height/1.1, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	//text->RenderText("title", 100, 100, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	glutSwapBuffers();
 }
@@ -276,6 +285,7 @@ void idle()
 
 	for (auto &o : objects)
 		o->update(deltaTime);
+
 
 	glutPostRedisplay();
 }
