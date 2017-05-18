@@ -1,19 +1,40 @@
-#include <GL/freeglut.h>
+// Standard includes.
 #include <iostream>
+#include <map>
+#include <string>
 #include <algorithm>
 #include <cmath>
+
+// GLEW
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+#include <GL/freeglut.h>
+
+// GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+// FreeType
+#include <ft2build.h>
+#include FT_FREETYPE_H
+// GL includes
+#include "Shader.h"
+
 #include "GameObject.h"
 #include "CubeComponent.h"
 #include "SpinComponent.h"
 #include "MenuComponent.h"
 #include "PyramidComponent.h"
+#include "Text.h"
 #include <chrono>
 
 int mouseX = 0;
 int mouseY = 0;
 
-int width = 1920;
-int height = 1080;
+int width = 800;
+int height = 600;
 
 float rotationX = 0;
 float rotationY = 0;
@@ -30,6 +51,7 @@ float oldY = 0;
 bool keys[256];
 
 std::list<GameObject*> objects;
+Text* text;
 
 void reshape(int w, int h)
 {
@@ -191,10 +213,10 @@ void drawCube()
 
 void display()
 {
-
+	glUseProgram(0);	// Important to use the correct program ID.
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(90.0f, width / (float)height, 0.1f, 50.0f);
@@ -237,6 +259,9 @@ void display()
 	drawCube();
 	glPopMatrix();
 
+	glPushMatrix();
+	text->RenderText("In Good Shape", 100.0f, height / 1.4f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -269,6 +294,8 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
+	text->initText(width, height);
+
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
 	glutReshapeFunc(reshape);
@@ -281,7 +308,10 @@ int main(int argc, char* argv[])
 
 	glEnable(GL_DEPTH_TEST);
 
+	
+
 	init();
+
 
 	glutMainLoop();
 
