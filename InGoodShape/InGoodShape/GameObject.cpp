@@ -1,6 +1,11 @@
+// GLEW
+#define GLEW_STATIC
+#include <GL/glew.h>
+
 #include "GameObject.h"
 #include "DrawComponent.h"
 #include <GL/freeglut.h>
+
 
 GameObject::GameObject()
 {

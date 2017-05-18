@@ -1,12 +1,33 @@
-#include <GL/freeglut.h>
+// Standard includes.
 #include <iostream>
+#include <map>
+#include <string>
 #include <algorithm>
 #include <cmath>
+
+// GLEW
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+#include <GL/freeglut.h>
+
+// GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+// FreeType
+#include <ft2build.h>
+#include FT_FREETYPE_H
+// GL includes
+#include "Shader.h"
+
 #include "GameObject.h"
 #include "CubeComponent.h"
 #include "SpinComponent.h"
 #include "MenuComponent.h"
 #include "PyramidComponent.h"
+#include "Text.h"
 #include <chrono>
 
 int mouseX = 0;
@@ -30,6 +51,7 @@ float oldY = 0;
 bool keys[256];
 
 std::list<GameObject*> objects;
+Text* text;
 
 void reshape(int w, int h)
 {
@@ -134,12 +156,12 @@ void init()
 	//exitButton->position = Vec3f(0, -4, 0);
 	//objects.push_back(exitButton);
 
-	GameObject* exitButton = new GameObject();
-	exitButton->addComponent(new PyramidComponent(1, 2));
-	exitButton->addComponent(new SpinComponent(25));
-	exitButton->addComponent(new MenuComponent("EXIT"));
-	exitButton->position = Vec3f(0, -4, 0);
-	objects.push_back(exitButton);
+	//GameObject* exitButton = new GameObject();
+	//exitButton->addComponent(new PyramidComponent(1, 2));
+	//exitButton->addComponent(new SpinComponent(25));
+	//exitButton->addComponent(new MenuComponent("EXIT"));
+	//exitButton->position = Vec3f(0, -4, 0);
+	//objects.push_back(exitButton);
 }
 
 void drawCube()
@@ -191,10 +213,10 @@ void drawCube()
 
 void display()
 {
-
+	glUseProgram(0);	// Important to use the correct program ID.
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(90.0f, width / (float)height, 0.1f, 50.0f);
@@ -237,6 +259,9 @@ void display()
 	drawCube();
 	glPopMatrix();
 
+	text->RenderText("IN GOOD SHAPE", (width/2)-(width/6), height/1.1, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	//text->RenderText("title", 100, 100, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	glutSwapBuffers();
 }
@@ -251,6 +276,7 @@ void idle()
 
 	for (auto &o : objects)
 		o->update(deltaTime);
+
 
 	glutPostRedisplay();
 }
@@ -269,6 +295,8 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
+	text->initText(width, height);
+
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
 	glutReshapeFunc(reshape);
@@ -281,7 +309,10 @@ int main(int argc, char* argv[])
 
 	glEnable(GL_DEPTH_TEST);
 
+	
+
 	init();
+
 
 	glutMainLoop();
 
