@@ -4,11 +4,15 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
 
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+// freeglut
 #include <GL/freeglut.h>
 
 // GLM
@@ -19,9 +23,14 @@
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+// openCV tools
+#include "opencv2/imgproc/imgproc.hpp" 
+#include "opencv2/highgui/highgui.hpp"
+#include "blobdetectionavans.h"
+
 // GL includes
 #include "Shader.h"
-
 #include "GameObject.h"
 #include "CubeComponent.h"
 #include "SpinComponent.h"
@@ -135,19 +144,19 @@ void init()
 	GameObject* instructionButton = new GameObject();
 	instructionButton->addComponent(new CubeComponent(0.5));
 	instructionButton->addComponent(new MenuComponent("INSTRUCTIONS"));
-	instructionButton->position = Vec3f(0, 2, 0);
+	instructionButton->position = ::Vec3f(0, 2, 0);
 	objects.push_back(instructionButton);
 
 	GameObject* startButton = new GameObject();
 	startButton->addComponent(new CubeComponent(0.5));
 	startButton->addComponent(new MenuComponent("START"));
-	startButton->position = Vec3f(0, 0, 0);
+	startButton->position = ::Vec3f(0, 0, 0);
 	objects.push_back(startButton);
 
 	GameObject* optionsButton = new GameObject();
 	optionsButton->addComponent(new CubeComponent(0.5));
 	optionsButton->addComponent(new MenuComponent("OPTIONS"));
-	optionsButton->position = Vec3f(0, -2, 0);
+	optionsButton->position = ::Vec3f(0, -2, 0);
 	objects.push_back(optionsButton);
 
 	//GameObject* exitButton = new GameObject();
