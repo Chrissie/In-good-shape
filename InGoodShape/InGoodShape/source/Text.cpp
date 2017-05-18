@@ -20,8 +20,7 @@
 // GL includes
 #include "Shader.h"
 #include "Text.h"
-// Properties
-const GLuint WIDTH = 800, HEIGHT = 600;
+
 
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character {
@@ -37,21 +36,6 @@ Shader* shader;
 
 Text text;
 
-// The MAIN function, from here we start our application and run the Game loop
-//int main(int argc, char* argv[])
-//{
-//	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-//	glutInitWindowSize(WIDTH, HEIGHT);
-//	glutInit(&argc, argv);
-//	glutCreateWindow("In Good Shape");
-//
-//	glutDisplayFunc(display);
-//	glutIdleFunc(idle);
-//	glEnable(GL_DEPTH_TEST);
-//	
-//	glutMainLoop();
-//	return 0;
-//}
 
 void Text::initText(int width, int height)
 {
@@ -86,7 +70,7 @@ void Text::initText(int width, int height)
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 
 	// Set size to load glyphs as
-	FT_Set_Pixel_Sizes(face, 0, 96);
+	FT_Set_Pixel_Sizes(face, 0, 100);
 
 	//// Disable byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

@@ -33,8 +33,8 @@
 int mouseX = 0;
 int mouseY = 0;
 
-int width = 800;
-int height = 600;
+int width = 1920;
+int height = 1080;
 
 float rotationX = 0;
 float rotationY = 0;
@@ -156,12 +156,12 @@ void init()
 	//exitButton->position = Vec3f(0, -4, 0);
 	//objects.push_back(exitButton);
 
-	GameObject* exitButton = new GameObject();
-	exitButton->addComponent(new PyramidComponent(1, 2));
-	exitButton->addComponent(new SpinComponent(25));
-	exitButton->addComponent(new MenuComponent("EXIT"));
-	exitButton->position = Vec3f(0, -4, 0);
-	objects.push_back(exitButton);
+	//GameObject* exitButton = new GameObject();
+	//exitButton->addComponent(new PyramidComponent(1, 2));
+	//exitButton->addComponent(new SpinComponent(25));
+	//exitButton->addComponent(new MenuComponent("EXIT"));
+	//exitButton->position = Vec3f(0, -4, 0);
+	//objects.push_back(exitButton);
 }
 
 void drawCube()
@@ -259,9 +259,9 @@ void display()
 	drawCube();
 	glPopMatrix();
 
-	glPushMatrix();
-	text->RenderText("In Good Shape", 100.0f, height / 1.4f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	glPopMatrix();
+	text->RenderText("IN GOOD SHAPE", (width/2)-(width/6), height/1.1, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	//text->RenderText("title", 100, 100, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	glutSwapBuffers();
 }
@@ -276,6 +276,7 @@ void idle()
 
 	for (auto &o : objects)
 		o->update(deltaTime);
+
 
 	glutPostRedisplay();
 }
