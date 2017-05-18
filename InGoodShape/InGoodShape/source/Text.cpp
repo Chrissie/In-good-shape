@@ -19,7 +19,7 @@
 #include FT_FREETYPE_H
 // GL includes
 #include "Shader.h"
-
+#include "Text.h"
 // Properties
 const GLuint WIDTH = 800, HEIGHT = 600;
 
@@ -35,33 +35,41 @@ std::map<GLchar, Character> Characters;
 GLuint VAO, VBO;
 Shader* shader;
 
-void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
-void display();
-void idle();
+Text text;
 
 // The MAIN function, from here we start our application and run the Game loop
-int main(int argc, char* argv[])
-{
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-	glutInitWindowSize(WIDTH, HEIGHT);
-	glutInit(&argc, argv);
-	glutCreateWindow("In Good Shape");
+//int main(int argc, char* argv[])
+//{
+//	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+//	glutInitWindowSize(WIDTH, HEIGHT);
+//	glutInit(&argc, argv);
+//	glutCreateWindow("In Good Shape");
+//
+//	glutDisplayFunc(display);
+//	glutIdleFunc(idle);
+//	glEnable(GL_DEPTH_TEST);
+//	
+//	glutMainLoop();
+//	return 0;
+//}
 
+void Text::initText(int width, int height)
+{
 	// Initialize GLEW to setup the OpenGL Function pointers
 	glewExperimental = GL_TRUE;
 	glewInit();
 
-	// Define the viewport dimensions
-	glViewport(0, 0, WIDTH, HEIGHT);
+	//// Define the viewport dimensions
+	////glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Set OpenGL options
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Compile and setup the shader
 	shader = new Shader("shaders/text.vs", "shaders/text.frag");
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(WIDTH), 0.0f, static_cast<GLfloat>(HEIGHT));
+	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(width), 0.0f, static_cast<GLfloat>(height));
 	shader->use();
 	glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	glUniform1i(glGetUniformLocation(shader->ID, "fontAtlas"), 0);
@@ -80,7 +88,7 @@ int main(int argc, char* argv[])
 	// Set size to load glyphs as
 	FT_Set_Pixel_Sizes(face, 0, 96);
 
-	// Disable byte-alignment restriction
+	//// Disable byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	// Load first 128 characters of ASCII set
@@ -136,21 +144,14 @@ int main(int argc, char* argv[])
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	glutDisplayFunc(display);
-	glutIdleFunc(idle);
-	glEnable(GL_DEPTH_TEST);
-	
-	glutMainLoop();
-	return 0;
 }
 
-void idle()
-{
-	glutPostRedisplay();
-}
+//void idle()
+//{
+//	glutPostRedisplay();
+//}
 
-void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+void Text::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 	// Activate corresponding render state	
 	shader->use();
@@ -195,15 +196,19 @@ void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void display()
-{
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	RenderText("In Good Shape", 100.0f, HEIGHT / 1.4f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	RenderText("Instructions", WIDTH / 2.4f, HEIGHT / 1.8f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
-	RenderText("Play", WIDTH / 2.4f, HEIGHT / 2.2f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
-	RenderText("Options", WIDTH / 2.4f, HEIGHT / 2.7f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
-	RenderText("Exit", WIDTH / 2.4f, HEIGHT / 3.4f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
-	glutSwapBuffers();
-}
+//void display()
+//{
+//	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//	text.RenderText("In Good Shape", 100.0f, HEIGHT / 1.4f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+//	text.RenderText("Instructions", WIDTH / 2.4f, HEIGHT / 1.8f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+//	text.RenderText("Play", WIDTH / 2.4f, HEIGHT / 2.2f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+//	text.RenderText("Options", WIDTH / 2.4f, HEIGHT / 2.7f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+//	text.RenderText("Exit", WIDTH / 2.4f, HEIGHT / 3.4f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+//
+//	/*SetCursorPos(1366, 0);
+//	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+//	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);*/
+//	glutSwapBuffers();
+//}
