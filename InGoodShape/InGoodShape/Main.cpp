@@ -33,8 +33,8 @@
 int mouseX = 0;
 int mouseY = 0;
 
-int width = 800;
-int height = 600;
+int width = 1920;
+int height = 1080;
 
 float rotationX = 0;
 float rotationY = 0;
