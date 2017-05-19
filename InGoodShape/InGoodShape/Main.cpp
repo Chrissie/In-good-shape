@@ -62,6 +62,14 @@ bool keys[256];
 std::list<GameObject*> objects;
 Text* text;
 
+//returns true if init was succesful, else return false
+bool cvInit()
+{
+	cv::VideoCapture cap(0);
+	cv::Mat frame;
+	return cap.read(frame);
+}
+
 void reshape(int w, int h)
 {
 	width = w;
@@ -305,6 +313,8 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
 	text->initText(width, height);
+
+	cvInit();
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
