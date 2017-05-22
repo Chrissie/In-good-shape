@@ -44,6 +44,9 @@
 using namespace irrklang;
 #pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
+irrklang::ISoundEngine* engine;
+irrklang::ISound* backgroundMusic;
+
 int mouseX = 0;
 int mouseY = 0;
 
@@ -76,9 +79,11 @@ void reshape(int w, int h)
 
 void keyboard(unsigned char key, int x, int  y)
 {
+	
 	switch (key) {
 	case 27: exit(0);
 		break;
+	case 32: backgroundMusic->setIsPaused(!backgroundMusic->getIsPaused());
 	default: //nothing
 		break;
 	}
@@ -305,12 +310,12 @@ void mouseClick(int button, int state, int x, int y)
 
 int main(int argc, char* argv[])
 {
-	ISoundEngine* engine = createIrrKlangDevice();
+	engine = createIrrKlangDevice();
 	if (!engine) {
 		return 0;
 	}
 
-	engine->play2D("MusicFiles/BackgroundMusic/africa!.mp3", true);
+	backgroundMusic = engine->play2D("MusicFiles/BackgroundMusic/africa!.mp3", true, false, true);
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
