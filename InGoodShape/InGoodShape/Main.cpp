@@ -40,7 +40,7 @@
 #include <chrono>
 
 // irrKlang includes
-#include <irrKlang.h>
+#include "include/irrKlang.h"
 using namespace irrklang;
 #pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
