@@ -17,6 +17,7 @@ void soundInit()
 	engine = createIrrKlangDevice();
 	if (!engine) {
 		cout << "Sound not working" << endl;
+		return;
 	}
 
 	backgroundMusic = engine->play2D("MusicFiles/BackgroundMusic/Worldwar3.mp3", true, false, true);

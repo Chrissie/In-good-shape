@@ -1,6 +1,7 @@
 #pragma once
 // Standard includes.
 #include <iostream>
+#include <string>
 
 // irrKlang includes
 #include "include/irrKlang.h"
