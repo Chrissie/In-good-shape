@@ -34,6 +34,8 @@
 #include <iterator>
 #include "MainMenu.h"
 #include "InstructionMenu.h"
+#include "PlayMenu.h"
+#include "OptionMenu.h"
 
 int mouseX = 0;
 int mouseY = 0;
@@ -63,10 +65,15 @@ Text* text;
 Menu menu;
 MainMenu* mainMenu;
 InstructionMenu* instructionMenu;
+PlayMenu* playScreen;
+OptionMenu* optionMenu;
 
 bool selectedButtons[10];
 
-enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS} menuState;
+enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, EXIT} menuState;
+
+// Prototype
+void switchMenu();
 
 
 void reshape(int w, int h)
@@ -93,18 +100,28 @@ void keyboard(unsigned char key, int x, int  y)
 			menu.selectButton(0);
 			if (menuState == MAIN) menuState = INSTRUCTIONS;
 			else if (menuState == INSTRUCTIONS) menuState = MAIN;
+			else if (menuState == OPTIONS) menuState = MAIN;
 		}
 		if (keys['2'])
 		{
 			menu.selectButton(1);
+			if (menuState == MAIN) menuState = START;
 		}
 		if (keys['3'])
 		{
 			menu.selectButton(2);
+			if (menuState == MAIN) menuState = OPTIONS;
 		}
 		if (keys['4'])
 		{
 			menu.selectButton(3);
+			if (menuState == MAIN) menuState = EXIT;
+		}
+		if (keys[13]) //enter key
+		{
+			for (int i = 0; i < sizeof(selectedButtons); i++)
+				selectedButtons[i] = false;
+			switchMenu();
 		}
 	}
 }
@@ -172,6 +189,8 @@ void init()
 	menuState = MAIN;
 	mainMenu = new MainMenu();
 	instructionMenu = nullptr;
+	playScreen = nullptr;
+	optionMenu = nullptr;
 }
 
 void drawCube()
@@ -255,8 +274,6 @@ void display()
 		rotationY += deltaTime * 180;
 	}
 
-
-
 	int count = 0;
 	for (auto &o : objects)
 	{
@@ -274,8 +291,6 @@ void display()
 		o->draw();
 	}
 	
-	
-
 	//draw cube
 	//glPushMatrix();
 	//glTranslatef(xPos, yPos, 0);
@@ -297,17 +312,46 @@ void switchMenu()
 {
 	switch (menuState)
 	{
-	case MAIN: if (mainMenu == nullptr) { delete instructionMenu; instructionMenu = nullptr; mainMenu = new MainMenu(); }
+	case MAIN: 
+		if (mainMenu == nullptr)
+		{
+			delete instructionMenu; 
+			delete optionMenu;
+			instructionMenu = nullptr; 
+			optionMenu = nullptr;
+			mainMenu = new MainMenu();
+		}
 		break;
-	case INSTRUCTIONS: if (instructionMenu == nullptr) { delete mainMenu; mainMenu = nullptr; instructionMenu = new InstructionMenu(); }
+	case INSTRUCTIONS: 
+		if (instructionMenu == nullptr)
+		{
+			delete mainMenu; 
+			mainMenu = nullptr; 
+			instructionMenu = new InstructionMenu();
+		}
 		break;
 	case START:
+		if(playScreen == nullptr)
+		{
+			delete mainMenu;
+			mainMenu = nullptr;
+			playScreen = new PlayMenu();
+		}
 		break;
 	case OPTIONS:
+		if(optionMenu == nullptr)
+		{
+			delete mainMenu;
+			mainMenu = nullptr;
+			optionMenu = new OptionMenu();
+		}
+		break;
+	case EXIT:
+		exit(0);
 		break;
 	}
 }
-
+	
 
 void idle()
 {
@@ -317,25 +361,6 @@ void idle()
 
 	for (auto &o : objects)
 		o->update(deltaTime);
-
-
-
-	if (keys[13]) //enter key
-	{
-		//// navigate to the selected menu
-		//if (mainMenu != nullptr)
-		//{
-		//	delete mainMenu;
-		//	mainMenu = nullptr;
-		//}
-		//instructionMenu = new InstructionMenu();
-		//for(int i = 0; i < sizeof(selectedButtons); i++)
-		//{
-		//	if (selectedButtons[i])
-		//		menuState = static_cast<MenuState>(i+1);
-		//}
-		switchMenu();
-	}
 
 	glutPostRedisplay();
 }
