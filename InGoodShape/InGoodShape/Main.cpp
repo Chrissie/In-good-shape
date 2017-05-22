@@ -39,13 +39,9 @@
 #include "Text.h"
 #include <chrono>
 
-// irrKlang includes
-#include "include/irrKlang.h"
-using namespace irrklang;
-#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+//sound
+#include "Sound.h"
 
-irrklang::ISoundEngine* engine;
-irrklang::ISound* backgroundMusic;
 
 int mouseX = 0;
 int mouseY = 0;
@@ -83,7 +79,8 @@ void keyboard(unsigned char key, int x, int  y)
 	switch (key) {
 	case 27: exit(0);
 		break;
-	case 32: backgroundMusic->setIsPaused(!backgroundMusic->getIsPaused());
+	case 32: toggleBackgroundMusic();
+	case 38: menuScrollSFX();
 	default: //nothing
 		break;
 	}
@@ -139,6 +136,7 @@ void moveCube(int key, int x, int y)
 	case GLUT_KEY_RIGHT: xPos++;
 		break;
 	case GLUT_KEY_UP: yPos++;
+		menuScrollSFX();
 		break;
 	case GLUT_KEY_DOWN: yPos--;
 		break;
@@ -310,12 +308,9 @@ void mouseClick(int button, int state, int x, int y)
 
 int main(int argc, char* argv[])
 {
-	engine = createIrrKlangDevice();
-	if (!engine) {
-		return 0;
-	}
-
-	backgroundMusic = engine->play2D("MusicFiles/BackgroundMusic/africa!.mp3", true, false, true);
+	
+	soundInit();
+	toggleBackgroundMusic();
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
@@ -342,7 +337,7 @@ int main(int argc, char* argv[])
 
 	glutMainLoop();
 
-	engine->drop();
+	dropSoundEngine();
 
 	return 0;
 }
