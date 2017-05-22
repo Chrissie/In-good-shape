@@ -75,12 +75,14 @@ void reshape(int w, int h)
 
 void keyboard(unsigned char key, int x, int  y)
 {
-	
+	cout << key << endl;
 	switch (key) {
 	case 27: exit(0);
 		break;
 	case 32: toggleBackgroundMusic();
-	case 38: menuScrollSFX();
+		break;
+	case 'm': menuScrollSFX();
+		break;
 	default: //nothing
 		break;
 	}
@@ -136,7 +138,6 @@ void moveCube(int key, int x, int y)
 	case GLUT_KEY_RIGHT: xPos++;
 		break;
 	case GLUT_KEY_UP: yPos++;
-		menuScrollSFX();
 		break;
 	case GLUT_KEY_DOWN: yPos--;
 		break;
