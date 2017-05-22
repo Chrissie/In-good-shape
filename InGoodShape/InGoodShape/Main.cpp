@@ -39,6 +39,11 @@
 #include "Text.h"
 #include <chrono>
 
+// irrKlang includes
+#include <irrKlang.h>
+using namespace irrklang;
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+
 int mouseX = 0;
 int mouseY = 0;
 
@@ -300,6 +305,13 @@ void mouseClick(int button, int state, int x, int y)
 
 int main(int argc, char* argv[])
 {
+	ISoundEngine* engine = createIrrKlangDevice();
+	if (!engine) {
+		return 0;
+	}
+
+	engine->play2D("../../media/getout.ogg", true);
+
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
@@ -324,6 +336,8 @@ int main(int argc, char* argv[])
 
 
 	glutMainLoop();
+
+	engine->drop();
 
 	return 0;
 }
