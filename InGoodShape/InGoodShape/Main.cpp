@@ -62,12 +62,46 @@ bool keys[256];
 std::list<GameObject*> objects;
 Text* text;
 
+cv::VideoCapture cap(0);
+cv::Mat frame;
+cv::Mat realFrame;
+GLuint *textures = new GLuint[2];
+
 //returns true if init was succesful, else return false
 bool cvInit()
 {
-	cv::VideoCapture cap(0);
-	cv::Mat frame;
 	return cap.read(frame);
+}
+
+void BindCVMat2GLTexture(cv::Mat& image, GLuint& imageTexture1)
+{
+	if (image.empty()) {
+		std::cout << "image empty" << std::endl;
+	}
+	else {
+		image.copyTo(realFrame);
+		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glGenTextures(1, &imageTexture1);
+		glBindTexture(GL_TEXTURE_2D, imageTexture1);
+
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		//cv::cvtColor(image, image, CV_BGR2RGB);
+	
+		glTexImage2D(GL_TEXTURE_2D,         // Type of texture
+			0,					   // Pyramid level (for mip-mapping) - 0 is the top level
+			GL_RGBA,              // Internal colour format to convert to
+			512,//image.cols,          // Image width  i.e. 640
+			512,//image.rows,          // Image height i.e. 480
+			0,                   // Border width in pixels (can either be 1 or 0)
+			GL_RGB,              // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+			GL_UNSIGNED_BYTE,    // Image data type
+			realFrame.ptr());        // The actual image data itself
+
+		imshow("",realFrame);
+	}
 }
 
 void reshape(int w, int h)
@@ -260,7 +294,22 @@ void display()
 	{
 		rotationY += deltaTime * 180;
 	}
-
+	if (keys['e'])
+	{
+		cv::Mat singleframe;
+		if (cap.read(frame))
+		{
+			cap.retrieve(singleframe);
+			BindCVMat2GLTexture(singleframe, textures[0]);
+			glBegin(GL_POLYGON);
+			glBindTexture(GL_TEXTURE_2D, textures[0]);
+			glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -1.0f);
+			glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, -1.0f);
+			glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
+			glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, 1.0f);
+			glEnd();
+		}
+	}
 	for (auto &o : objects)
 		o->draw();
 
@@ -298,6 +347,8 @@ void idle()
 	glutPostRedisplay();
 }
 
+
+
 void mouseClick(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
@@ -314,7 +365,10 @@ int main(int argc, char* argv[])
 	glutCreateWindow("IN GOOD SHAPE");
 	text->initText(width, height);
 
-	cvInit();
+	if (cvInit())
+	{
+		BindCVMat2GLTexture(frame, textures[0]);
+	}
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
