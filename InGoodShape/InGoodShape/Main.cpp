@@ -310,7 +310,7 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	engine->play2D("../../media/getout.ogg", true);
+	engine->play2D("MusicFiles/ophelia.mp3", true);
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
