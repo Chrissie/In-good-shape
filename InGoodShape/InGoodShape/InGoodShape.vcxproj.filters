@@ -12,6 +12,9 @@
     <ClCompile Include="PyramidComponent.cpp" />
     <ClCompile Include="SpinComponent.cpp" />
     <ClCompile Include="Vec.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="InstructionMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Shader.h" />
@@ -24,6 +27,9 @@
     <ClInclude Include="PyramidComponent.h" />
     <ClInclude Include="SpinComponent.h" />
     <ClInclude Include="Vec.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="InstructionMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">

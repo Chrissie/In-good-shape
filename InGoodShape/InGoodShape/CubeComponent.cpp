@@ -1,6 +1,6 @@
 #include "CubeComponent.h"
 #include <GL/freeglut.h>
-
+#include <iostream>
 
 
 
@@ -49,7 +49,6 @@ void CubeComponent::draw()
 	glVertex3f(-size, size, size);
 	glVertex3f(size, size, size);
 	glVertex3f(size, -size, size);
-
 
 	glEnd();
 }

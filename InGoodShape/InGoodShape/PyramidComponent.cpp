@@ -46,11 +46,6 @@ void PyramidComponent::draw()
 	glVertex3f(-size, 0, -size);
 	glVertex3f(0, height, 0);
 
-
-	
-
-
-
 	glColor3f(0, 0, 1);
 
 

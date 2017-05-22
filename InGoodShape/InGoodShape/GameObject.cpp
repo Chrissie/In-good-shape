@@ -9,6 +9,7 @@
 
 GameObject::GameObject()
 {
+
 }
 
 
@@ -21,24 +22,26 @@ void GameObject::addComponent(Component * component)
 	component->setGameObject(this);
 	components.push_back(component);
 
-	if (!drawComponent)
-		drawComponent = dynamic_cast<DrawComponent*>(component);
+	DrawComponent* drawComponent = dynamic_cast<DrawComponent*>(component);
+	if (drawComponent)
+		drawComponents.push_back(drawComponent);
 }
 
 
 void GameObject::draw()
 {
-	if (!drawComponent)
-		return;
-
-	glPushMatrix();
-	glTranslatef(position.x, position.y, position.z);
-	glRotatef(rotation.x, 1, 0, 0);
-	glRotatef(rotation.y, 0, 1, 0);
-	glRotatef(rotation.z, 0, 0, 1);
-	glScalef(scale.x, scale.y, scale.z);
-	drawComponent->draw();
-	glPopMatrix();
+	glUseProgram(0);
+	for (auto drawComponent : drawComponents)
+	{
+		glPushMatrix();
+		glTranslatef(position.x, position.y, position.z);
+		glRotatef(rotation.x, 1, 0, 0);
+		glRotatef(rotation.y, 0, 1, 0);
+		glRotatef(rotation.z, 0, 0, 1);
+		glScalef(scale.x, scale.y, scale.z);
+		drawComponent->draw();
+		glPopMatrix();
+	}
 }
 
 void GameObject::update(float elapsedTime)

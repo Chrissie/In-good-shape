@@ -152,7 +152,10 @@
     <ClCompile Include="CubeComponent.cpp" />
     <ClCompile Include="DrawComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InstructionMenu.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\Text.cpp" />
   </ItemGroup>
@@ -169,6 +172,9 @@
     <ClInclude Include="CubeComponent.h" />
     <ClInclude Include="DrawComponent.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InstructionMenu.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuComponent.h" />
     <ClInclude Include="PyramidComponent.h" />
     <ClInclude Include="SpinComponent.h" />
