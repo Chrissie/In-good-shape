@@ -14,17 +14,17 @@ InstructionMenu::InstructionMenu()
 	objects.push_back(backButton);
 
 	GameObject* instructionButton = new GameObject();
-	instructionButton->addComponent(new MenuComponent("Use your hands to control the game!"));
+	instructionButton->addComponent(new MenuComponent("Use hand gestures to control the game.", 0.8f));
 	instructionButton->position = Vec3f(-400, 2, 0);
 	objects.push_back(instructionButton);
 
 	GameObject* startButton = new GameObject();
-	startButton->addComponent(new MenuComponent("Don't get mad if you lose!!"));
+	startButton->addComponent(new MenuComponent("Fill selected surface on the screen using objects.", 0.8f));
 	startButton->position = Vec3f(-400, 0, 0);
 	objects.push_back(startButton);
 
 	GameObject* saltyBitch = new GameObject();
-	saltyBitch->addComponent(new MenuComponent("Don't be a salty bitch!!!"));
+	saltyBitch->addComponent(new MenuComponent("When every surface of the shape is filled, you go to the next level.", 0.8f));
 	saltyBitch->position = Vec3f(-400, -2, 0);
 	objects.push_back(saltyBitch);
 
