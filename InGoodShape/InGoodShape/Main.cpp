@@ -28,6 +28,7 @@
 #include "opencv2/imgproc/imgproc.hpp" 
 #include "opencv2/highgui/highgui.hpp"
 #include "blobdetectionavans.h"
+#include "ObjectDetection.h"
 
 // GL includes
 #include "Shader.h"
@@ -83,7 +84,7 @@ OptionMenu* optionMenu;
 
 bool selectedButtons[10];
 
-enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, EXIT} menuState;
+enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, EXIT } menuState;
 
 // Prototype
 void switchMenu();
