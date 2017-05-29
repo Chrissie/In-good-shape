@@ -475,8 +475,8 @@ void mouseClick(int button, int state, int x, int y)
 int main(int argc, char* argv[])
 {
 	
-	soundInit();
-	toggleBackgroundMusic();
+	//soundInit();
+	//toggleBackgroundMusic();
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
@@ -508,7 +508,7 @@ int main(int argc, char* argv[])
 
 	objectDetectTest();
 	glutMainLoop();
-	dropSoundEngine();
+	//dropSoundEngine();
 	
 	return 0;
 }

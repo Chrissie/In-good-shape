@@ -101,6 +101,30 @@ void objectDetectTest()
 					else if (vtc == 6)
 						setLabel(dst, "HEXAGON", contours[i]);
 				}
+				else if (approx.size() == 7)
+				{
+					// Number of vertices of polygonal curve
+					int vtc = approx.size();
+
+					// Get the cosines of all corners
+					std::vector<double> cos;
+					for (int j = 2; j < vtc + 1; j++)
+						cos.push_back(angle(approx[j%vtc], approx[j - 2], approx[j - 1]));
+
+					// Sort ascending the cosine values
+					std::sort(cos.begin(), cos.end());
+
+					// Get the lowest and the highest cosine
+					double mincos = cos.front();
+					double maxcos = cos.back();
+
+					if (mincos < 70 && maxcos > 80)
+					{
+						if (vtc == 7)
+							setLabel(dst, "ARROW", contours[i]);
+					}
+
+				}
 				else
 				{
 					// Detect and label circles
