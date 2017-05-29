@@ -39,6 +39,10 @@
 #include "Text.h"
 #include <chrono>
 
+//sound
+#include "Sound.h"
+
+
 int mouseX = 0;
 int mouseY = 0;
 
@@ -118,8 +122,13 @@ void reshape(int w, int h)
 
 void keyboard(unsigned char key, int x, int  y)
 {
+	cout << key << endl;
 	switch (key) {
 	case 27: exit(0);
+		break;
+	case 32: toggleBackgroundMusic();
+		break;
+	case 'm': menuScrollSFX();
 		break;
 	default: //nothing
 		break;
@@ -377,6 +386,10 @@ void mouseClick(int button, int state, int x, int y)
 
 int main(int argc, char* argv[])
 {
+	
+	soundInit();
+	toggleBackgroundMusic();
+
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
@@ -405,5 +418,7 @@ int main(int argc, char* argv[])
 	init();
 
 	glutMainLoop();
+	dropSoundEngine();
+	//remove this line.
 	return 0;
 }
