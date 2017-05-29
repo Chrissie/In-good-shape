@@ -251,45 +251,11 @@ void moveCube(int key, int x, int y)
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
-<<<<<<< HEAD
 	menuState = MAIN;
 	mainMenu = new MainMenu();
 	instructionMenu = nullptr;
 	playScreen = nullptr;
 	optionMenu = nullptr;
-=======
-
-	GameObject* instructionButton = new GameObject();
-	instructionButton->addComponent(new CubeComponent(0.5));
-	instructionButton->addComponent(new MenuComponent("INSTRUCTIONS"));
-	instructionButton->position = ::Vec3f(0, 2, 0);
-	objects.push_back(instructionButton);
-
-	GameObject* startButton = new GameObject();
-	startButton->addComponent(new CubeComponent(0.5));
-	startButton->addComponent(new MenuComponent("START"));
-	startButton->position = ::Vec3f(0, 0, 0);
-	objects.push_back(startButton);
-
-	GameObject* optionsButton = new GameObject();
-	optionsButton->addComponent(new CubeComponent(0.5));
-	optionsButton->addComponent(new MenuComponent("OPTIONS"));
-	optionsButton->position = ::Vec3f(0, -2, 0);
-	objects.push_back(optionsButton);
-
-	//GameObject* exitButton = new GameObject();
-	//exitButton->addComponent(new CubeComponent(0.5));
-	//exitButton->addComponent(new MenuComponent("EXIT"));
-	//exitButton->position = Vec3f(0, -4, 0);
-	//objects.push_back(exitButton);
-
-	//GameObject* exitButton = new GameObject();
-	//exitButton->addComponent(new PyramidComponent(1, 2));
-	//exitButton->addComponent(new SpinComponent(25));
-	//exitButton->addComponent(new MenuComponent("EXIT"));
-	//exitButton->position = Vec3f(0, -4, 0);
-	//objects.push_back(exitButton);
->>>>>>> 9efa55fb09ed6f18fa0e4826de701fb8166001be
 }
 
 void drawCube()
@@ -377,7 +343,6 @@ void display()
 
 	int count = 0;
 	for (auto &o : objects)
-<<<<<<< HEAD
 	{
 		if (o->getComponent<SpinComponent>() != nullptr)
 		{
@@ -389,17 +354,14 @@ void display()
 				spinComponent->stopSpin();
 		}
 		count++;
-=======
-		o->draw();	
+		o->draw();
+	}
 
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	//draw cube
 	glPushMatrix();
 	glTranslatef(xPos, yPos, 4);
->>>>>>> 9efa55fb09ed6f18fa0e4826de701fb8166001be
 
-		o->draw();
-	}
 	
 	//draw cube
 	//glPushMatrix();
@@ -496,11 +458,6 @@ void idle()
 	for (auto &o : objects)
 		o->update(deltaTime);
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 9efa55fb09ed6f18fa0e4826de701fb8166001be
 	glutPostRedisplay();
 }
 
@@ -550,6 +507,6 @@ int main(int argc, char* argv[])
 
 	glutMainLoop();
 	dropSoundEngine();
-	//remove this line.
+	
 	return 0;
 }
