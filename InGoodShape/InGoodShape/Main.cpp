@@ -340,6 +340,23 @@ void display()
 		0, 0, 0,
 		0, 1, 0);
 
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	//draw cube
+	glPushMatrix();
+	glTranslatef(xPos, yPos, 4);
+
+
+	//draw cube
+	//glPushMatrix();
+	//glTranslatef(xPos, yPos, 0);
+
+	glTranslatef(0.5, 0.5, -0.5);
+	glRotatef(rotationX, 1, 0, 0);
+	glRotatef(rotationY, 0, 1, 0);
+	glTranslatef(-0.5, -0.5, 0.5);
+
+	drawCube();
+	glPopMatrix();
 
 	int count = 0;
 	for (auto &o : objects)
@@ -357,27 +374,15 @@ void display()
 		o->draw();
 	}
 
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	//draw cube
-	glPushMatrix();
-	glTranslatef(xPos, yPos, 4);
-
 	
-	//draw cube
-	//glPushMatrix();
-	//glTranslatef(xPos, yPos, 0);
-
-	//glTranslatef(0.5, 0.5, -0.5);
-	//glRotatef(rotationX, 1, 0, 0);
-	//glRotatef(rotationY, 0, 1, 0);
-	//glTranslatef(-0.5, -0.5, 0.5);
-
-	//drawCube();
-	//glPopMatrix();
 
 	//text->RenderText("IN GOOD SHAPE", (width/8), height/1.2, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	glutSwapBuffers();
+	/*if (playScreen != nullptr)
+	{
+		playScreen->updateTexture(textures[0]);
+	}*/
 }
 
 void switchMenu()
