@@ -25,7 +25,7 @@ void SliderComponent::draw()
 	glVertex3f(gameObject->position.x + length, gameObject->position.y, 0);
 
 
-	glVertex3f(gameObject->position.x +, gameObject->position.y-(size), 0);
+	glVertex3f(gameObject->position.x, gameObject->position.y-(size), 0);
 	glVertex3f(gameObject->position.x, gameObject->position.y+(size), 0);
 	glVertex3f(gameObject->position.x+1, gameObject->position.y+(size), 0);
 	glVertex3f(gameObject->position.x+1, gameObject->position.y-(size), 0);

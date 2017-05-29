@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -45,6 +46,7 @@
 #include "InstructionMenu.h"
 #include "PlayMenu.h"
 #include "OptionMenu.h"
+#include "Main.h"
 
 //sound
 #include "Sound.h"
@@ -91,7 +93,7 @@ void switchMenu();
 
 
 cv::VideoCapture cap(0);
-cv::Mat frame;
+//cv::Mat frame;
 GLuint *textures = new GLuint[1]{ 0 };
 
 //returns true if init was succesful, else return false
@@ -100,7 +102,7 @@ bool cvInit()
 	return cap.read(frame);
 }
 
-void BindCVMat2GLTexture(cv::Mat& image)
+void Main::BindCVMat2GLTexture(cv::Mat& image)
 {
 	if (image.empty()) {
 		std::cout << "image empty" << std::endl;
@@ -341,6 +343,22 @@ void display()
 		0, 0, 0,
 		0, 1, 0);
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(0, 1000, 0);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(1000, 1000, 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(1000, 0, 0);
+	glEnd();
+	glPopMatrix();
+
 
 	int count = 0;
 	for (auto &o : objects)
@@ -358,15 +376,18 @@ void display()
 		o->draw();
 	}
 
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+
+
+
 	//draw cube
-	glPushMatrix();
-	glTranslatef(xPos, yPos, 4);
+	//glPushMatrix();
+	//glTranslatef(xPos, yPos, 4);
 
 	
 	//draw cube
 	//glPushMatrix();
-	//glTranslatef(xPos, yPos, 0);
+	//glTranslatef(0, 0, 0);
 
 	//glTranslatef(0.5, 0.5, -0.5);
 	//glRotatef(rotationX, 1, 0, 0);
@@ -377,6 +398,17 @@ void display()
 	//glPopMatrix();
 
 	//text->RenderText("IN GOOD SHAPE", (width/8), height/1.2, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+	//glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+
+
+
+
+
+	if (playScreen)
+		playScreen->draw();
+
 
 	glutSwapBuffers();
 }
@@ -430,7 +462,7 @@ void idle()
 {
 	if (cap.read(frame))
 	{
-		BindCVMat2GLTexture(frame);
+		Main::BindCVMat2GLTexture(frame);
 	}
 
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
@@ -485,9 +517,9 @@ int main(int argc, char* argv[])
 	glutFullScreen();
 	text->initText(width, height);
 
-	if (cvInit())
+	if (cvInit() && menuState == START)
 	{
-		BindCVMat2GLTexture(frame);
+		Main::BindCVMat2GLTexture(frame);
 		glBindTexture(GL_TEXTURE_2D, textures[0]);
 		glEnable(GL_TEXTURE_2D);
 	}

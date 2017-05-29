@@ -38,6 +38,7 @@
     <ClInclude Include="OptionMenu.h" />
     <ClInclude Include="SliderComponent.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="Main.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">
