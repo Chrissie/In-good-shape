@@ -36,8 +36,15 @@
 #include "SpinComponent.h"
 #include "MenuComponent.h"
 #include "PyramidComponent.h"
+#include "Menu.h"
 #include "Text.h"
 #include <chrono>
+#include <vector>
+#include <iterator>
+#include "MainMenu.h"
+#include "InstructionMenu.h"
+#include "PlayMenu.h"
+#include "OptionMenu.h"
 
 //sound
 #include "Sound.h"
@@ -63,8 +70,24 @@ float oldY = 0;
 
 bool keys[256];
 
+int lastTime = 0;
+
 std::list<GameObject*> objects;
+
 Text* text;
+Menu menu;
+MainMenu* mainMenu;
+InstructionMenu* instructionMenu;
+PlayMenu* playScreen;
+OptionMenu* optionMenu;
+
+bool selectedButtons[10];
+
+enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, EXIT} menuState;
+
+// Prototype
+void switchMenu();
+
 
 cv::VideoCapture cap(0);
 cv::Mat frame;
@@ -133,8 +156,39 @@ void keyboard(unsigned char key, int x, int  y)
 	default: //nothing
 		break;
 	}
+	if (keys[key] == false)
+	{
+		keys[key] = true;
 
-	keys[key] = true;
+		if (keys['1'])
+		{
+			menu.selectButton(0);
+			if (menuState == MAIN) menuState = INSTRUCTIONS;
+			else if (menuState == INSTRUCTIONS) menuState = MAIN;
+			else if (menuState == OPTIONS) menuState = MAIN;
+		}
+		if (keys['2'])
+		{
+			menu.selectButton(1);
+			if (menuState == MAIN) menuState = START;
+		}
+		if (keys['3'])
+		{
+			menu.selectButton(2);
+			if (menuState == MAIN) menuState = OPTIONS;
+		}
+		if (keys['4'])
+		{
+			menu.selectButton(3);
+			if (menuState == MAIN) menuState = EXIT;
+		}
+		if (keys[13]) //enter key
+		{
+			for (int i = 0; i < sizeof(selectedButtons); i++)
+				selectedButtons[i] = false;
+			switchMenu();
+		}
+	}
 }
 
 void keyboardUp(unsigned char key, int x, int y)
@@ -193,40 +247,15 @@ void moveCube(int key, int x, int y)
 	}
 }
 
+
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
-
-	GameObject* instructionButton = new GameObject();
-	instructionButton->addComponent(new CubeComponent(0.5));
-	instructionButton->addComponent(new MenuComponent("INSTRUCTIONS"));
-	instructionButton->position = ::Vec3f(0, 2, 0);
-	objects.push_back(instructionButton);
-
-	GameObject* startButton = new GameObject();
-	startButton->addComponent(new CubeComponent(0.5));
-	startButton->addComponent(new MenuComponent("START"));
-	startButton->position = ::Vec3f(0, 0, 0);
-	objects.push_back(startButton);
-
-	GameObject* optionsButton = new GameObject();
-	optionsButton->addComponent(new CubeComponent(0.5));
-	optionsButton->addComponent(new MenuComponent("OPTIONS"));
-	optionsButton->position = ::Vec3f(0, -2, 0);
-	objects.push_back(optionsButton);
-
-	//GameObject* exitButton = new GameObject();
-	//exitButton->addComponent(new CubeComponent(0.5));
-	//exitButton->addComponent(new MenuComponent("EXIT"));
-	//exitButton->position = Vec3f(0, -4, 0);
-	//objects.push_back(exitButton);
-
-	//GameObject* exitButton = new GameObject();
-	//exitButton->addComponent(new PyramidComponent(1, 2));
-	//exitButton->addComponent(new SpinComponent(25));
-	//exitButton->addComponent(new MenuComponent("EXIT"));
-	//exitButton->position = Vec3f(0, -4, 0);
-	//objects.push_back(exitButton);
+	menuState = MAIN;
+	mainMenu = new MainMenu();
+	instructionMenu = nullptr;
+	playScreen = nullptr;
+	optionMenu = nullptr;
 }
 
 void drawCube()
@@ -294,6 +323,7 @@ void drawCube()
 	glEnd();
 }
 
+
 void display()
 {
 	glUseProgram(0);	// Important to use the correct program ID.
@@ -311,31 +341,90 @@ void display()
 		0, 1, 0);
 
 
+	int count = 0;
 	for (auto &o : objects)
-		o->draw();	
+	{
+		if (o->getComponent<SpinComponent>() != nullptr)
+		{
+			SpinComponent * spinComponent = o->getComponent<SpinComponent>();
+
+			if (selectedButtons[count])
+				spinComponent->spinAll();
+			else
+				spinComponent->stopSpin();
+		}
+		count++;
+		o->draw();
+	}
 
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	//draw cube
 	glPushMatrix();
 	glTranslatef(xPos, yPos, 4);
 
-	glTranslatef(0.5, 0.5, -0.5);
-	glRotatef(rotationX, 1, 0, 0);
-	glRotatef(rotationY, 0, 1, 0);
-	glTranslatef(-0.5, -0.5, 0.5);
+	
+	//draw cube
+	//glPushMatrix();
+	//glTranslatef(xPos, yPos, 0);
 
-	drawCube();
-	glPopMatrix();
+	//glTranslatef(0.5, 0.5, -0.5);
+	//glRotatef(rotationX, 1, 0, 0);
+	//glRotatef(rotationY, 0, 1, 0);
+	//glTranslatef(-0.5, -0.5, 0.5);
 
-	text->RenderText("IN GOOD SHAPE", (width/2)-(width/6), height/1.1, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	//drawCube();
+	//glPopMatrix();
 
-	//text->RenderText("title", 100, 100, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	//text->RenderText("IN GOOD SHAPE", (width/8), height/1.2, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	glutSwapBuffers();
 }
 
+void switchMenu()
+{
+	switch (menuState)
+	{
+	case MAIN: 
+		if (mainMenu == nullptr)
+		{
+			delete instructionMenu; 
+			delete optionMenu;
+			instructionMenu = nullptr; 
+			optionMenu = nullptr;
+			mainMenu = new MainMenu();
+		}
+		break;
+	case INSTRUCTIONS: 
+		if (instructionMenu == nullptr)
+		{
+			delete mainMenu; 
+			mainMenu = nullptr; 
+			instructionMenu = new InstructionMenu();
+		}
+		break;
+	case START:
+		if(playScreen == nullptr)
+		{
+			delete mainMenu;
+			mainMenu = nullptr;
+			playScreen = new PlayMenu();
+		}
+		break;
+	case OPTIONS:
+		if(optionMenu == nullptr)
+		{
+			delete mainMenu;
+			mainMenu = nullptr;
+			optionMenu = new OptionMenu();
+		}
+		break;
+	case EXIT:
+		exit(0);
+		break;
+	}
+}
+	
 
-int lastTime = 0;
 void idle()
 {
 	if (cap.read(frame))
@@ -369,8 +458,6 @@ void idle()
 	for (auto &o : objects)
 		o->update(deltaTime);
 
-
-
 	glutPostRedisplay();
 }
 
@@ -394,6 +481,7 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
+	glutFullScreen();
 	text->initText(width, height);
 
 	if (cvInit())
@@ -419,6 +507,6 @@ int main(int argc, char* argv[])
 
 	glutMainLoop();
 	dropSoundEngine();
-	//remove this line.
+	
 	return 0;
 }

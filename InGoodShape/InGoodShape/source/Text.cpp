@@ -70,7 +70,7 @@ void Text::initText(int width, int height)
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 
 	// Set size to load glyphs as
-	FT_Set_Pixel_Sizes(face, 0, 100);
+	FT_Set_Pixel_Sizes(face, 0, 200);
 
 	//// Disable byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

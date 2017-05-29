@@ -4,11 +4,14 @@ class GameObject;
 
 class Component
 {
-protected:
-	GameObject* gameObject;
+	
 public:
 	Component();
 	~Component();
+
+	virtual void init() {};
+
+	GameObject* gameObject;
 
 	virtual void update(float elapsedTime) {};
 
