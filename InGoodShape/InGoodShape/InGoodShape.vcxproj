@@ -107,12 +107,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\Avans\Jaar 2\Periode 4\TI2.4-In-Good-Shape\InGoodShape\InGoodShape\freeglut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\opencv\build\include;freetype/include;freetype/include/freetype2;freeglut/include;glm_test;glm_test/glm;glfw_test/include;header;glfw_test;glfw_test/include/GLFW</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>D:\Avans\Jaar 2\Periode 4\TI2.4-In-Good-Shape\InGoodShape\InGoodShape\freeglut\lib;freeglut/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;opengl32.lib;glu32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>freetype/lib;freeglut/lib;C:\\opencv\build\x64\vc14\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;freetype.lib;opengl32.lib;glu32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;opencv_world320.lib;opencv_world320d.lib;/NODEFAULTLIB:libcmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -158,6 +158,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="OptionMenu.cpp" />
     <ClCompile Include="PlayMenu.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\Text.cpp" />
   </ItemGroup>
@@ -181,6 +182,7 @@
     <ClInclude Include="OptionMenu.h" />
     <ClInclude Include="PlayMenu.h" />
     <ClInclude Include="PyramidComponent.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="SpinComponent.h" />
     <ClInclude Include="Vec.h" />
   </ItemGroup>

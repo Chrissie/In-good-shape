@@ -4,11 +4,15 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
 
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+// freeglut
 #include <GL/freeglut.h>
 
 // GLM
@@ -19,9 +23,14 @@
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+// openCV tools
+#include "opencv2/imgproc/imgproc.hpp" 
+#include "opencv2/highgui/highgui.hpp"
+#include "blobdetectionavans.h"
+
 // GL includes
 #include "Shader.h"
-
 #include "GameObject.h"
 #include "CubeComponent.h"
 #include "SpinComponent.h"
@@ -36,6 +45,10 @@
 #include "InstructionMenu.h"
 #include "PlayMenu.h"
 #include "OptionMenu.h"
+
+//sound
+#include "Sound.h"
+
 
 int mouseX = 0;
 int mouseY = 0;
@@ -76,6 +89,53 @@ enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, EXIT} menuState;
 void switchMenu();
 
 
+cv::VideoCapture cap(0);
+cv::Mat frame;
+GLuint *textures = new GLuint[1]{ 0 };
+
+//returns true if init was succesful, else return false
+bool cvInit()
+{
+	return cap.read(frame);
+}
+
+void BindCVMat2GLTexture(cv::Mat& image)
+{
+	if (image.empty()) {
+		std::cout << "image empty" << std::endl;
+	}
+	else 
+	{
+		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+		if(textures[0] == 0)
+			glGenTextures(1, textures);
+		glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// Set texture clamping method
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+		//cv::cvtColor(image, image, CV_BGR2RGB);
+		unsigned char* data = image.ptr();
+
+		glTexImage2D(GL_TEXTURE_2D,         // Type of texture
+			0,					 // Pyramid level (for mip-mapping) - 0 is the top level
+			GL_RGB,              // Internal colour format to convert to
+			image.cols,          // Image width  i.e. 640
+			image.rows,          // Image height i.e. 480
+			0,                   // Border width in pixels (can either be 1 or 0)
+			GL_BGR,              // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+			GL_UNSIGNED_BYTE,    // Image data type
+			data);        // The actual image data itself
+
+	}
+}
+
 void reshape(int w, int h)
 {
 	width = w;
@@ -85,8 +145,13 @@ void reshape(int w, int h)
 
 void keyboard(unsigned char key, int x, int  y)
 {
+	cout << key << endl;
 	switch (key) {
 	case 27: exit(0);
+		break;
+	case 32: toggleBackgroundMusic();
+		break;
+	case 'm': menuScrollSFX();
 		break;
 	default: //nothing
 		break;
@@ -186,56 +251,108 @@ void moveCube(int key, int x, int y)
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
+<<<<<<< HEAD
 	menuState = MAIN;
 	mainMenu = new MainMenu();
 	instructionMenu = nullptr;
 	playScreen = nullptr;
 	optionMenu = nullptr;
+=======
+
+	GameObject* instructionButton = new GameObject();
+	instructionButton->addComponent(new CubeComponent(0.5));
+	instructionButton->addComponent(new MenuComponent("INSTRUCTIONS"));
+	instructionButton->position = ::Vec3f(0, 2, 0);
+	objects.push_back(instructionButton);
+
+	GameObject* startButton = new GameObject();
+	startButton->addComponent(new CubeComponent(0.5));
+	startButton->addComponent(new MenuComponent("START"));
+	startButton->position = ::Vec3f(0, 0, 0);
+	objects.push_back(startButton);
+
+	GameObject* optionsButton = new GameObject();
+	optionsButton->addComponent(new CubeComponent(0.5));
+	optionsButton->addComponent(new MenuComponent("OPTIONS"));
+	optionsButton->position = ::Vec3f(0, -2, 0);
+	objects.push_back(optionsButton);
+
+	//GameObject* exitButton = new GameObject();
+	//exitButton->addComponent(new CubeComponent(0.5));
+	//exitButton->addComponent(new MenuComponent("EXIT"));
+	//exitButton->position = Vec3f(0, -4, 0);
+	//objects.push_back(exitButton);
+
+	//GameObject* exitButton = new GameObject();
+	//exitButton->addComponent(new PyramidComponent(1, 2));
+	//exitButton->addComponent(new SpinComponent(25));
+	//exitButton->addComponent(new MenuComponent("EXIT"));
+	//exitButton->position = Vec3f(0, -4, 0);
+	//objects.push_back(exitButton);
+>>>>>>> 9efa55fb09ed6f18fa0e4826de701fb8166001be
 }
 
 void drawCube()
 {
 	//front
 	glBegin(GL_QUADS);
-	glColor3f(1, 0, 0);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(0, 1, 0);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(1, 1, 0);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(1, 0, 0);
 
 	//back
-	glColor3f(1, 0.5, 0);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0, 0, -1);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(0, 1, -1);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(1, 1, -1);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(1, 0, -1);
 
 	//left side
-	glColor3f(0, 0, 1);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(0, 1, 0);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(0, 1, -1);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0, -1);
 
 	//right side
-	glColor3f(0, 1, 0);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(1, 0, 0);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(1, 1, 0);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(1, 1, -1);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(1, 0, -1);
 
 	//bottom
-	glColor3f(1, 1, 0);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0, 0, 0);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(1, 0, 0);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(1, 0, -1);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 0, -1);
 
 	//top
-	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(0, 1, 0);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(1, 1, 0);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(1, 1, -1);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0, 1, -1);
 	glEnd();
 }
@@ -257,25 +374,10 @@ void display()
 		0, 0, 0,
 		0, 1, 0);
 
-	if (keys['w'])
-	{
-		rotationX -= deltaTime * 180;
-	}
-	if (keys['s'])
-	{
-		rotationX += deltaTime * 180;
-	}
-	if (keys['a'])
-	{
-		rotationY -= deltaTime * 180;
-	}
-	if (keys['d'])
-	{
-		rotationY += deltaTime * 180;
-	}
 
 	int count = 0;
 	for (auto &o : objects)
+<<<<<<< HEAD
 	{
 		if (o->getComponent<SpinComponent>() != nullptr)
 		{
@@ -287,6 +389,14 @@ void display()
 				spinComponent->stopSpin();
 		}
 		count++;
+=======
+		o->draw();	
+
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	//draw cube
+	glPushMatrix();
+	glTranslatef(xPos, yPos, 4);
+>>>>>>> 9efa55fb09ed6f18fa0e4826de701fb8166001be
 
 		o->draw();
 	}
@@ -355,15 +465,46 @@ void switchMenu()
 
 void idle()
 {
+	if (cap.read(frame))
+	{
+		BindCVMat2GLTexture(frame);
+	}
+
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentTime - lastTime) / 1000.0f;
 	lastTime = currentTime;
 
+	if (keys['w'])
+	{
+		rotationX -= deltaTime * 180;
+	}
+	if (keys['s'])
+	{
+		rotationX += deltaTime * 180;
+	}
+	if (keys['a'])
+	{
+		rotationY -= deltaTime * 180;
+	}
+	if (keys['d'])
+	{
+		rotationY += deltaTime * 180;
+	}
+
+
+
 	for (auto &o : objects)
 		o->update(deltaTime);
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 9efa55fb09ed6f18fa0e4826de701fb8166001be
 	glutPostRedisplay();
 }
+
+
 
 void mouseClick(int button, int state, int x, int y)
 {
@@ -375,12 +516,23 @@ void mouseClick(int button, int state, int x, int y)
 
 int main(int argc, char* argv[])
 {
+	
+	soundInit();
+	toggleBackgroundMusic();
+
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
 	glutFullScreen();
 	text->initText(width, height);
+
+	if (cvInit())
+	{
+		BindCVMat2GLTexture(frame);
+		glBindTexture(GL_TEXTURE_2D, textures[0]);
+		glEnable(GL_TEXTURE_2D);
+	}
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
@@ -394,12 +546,10 @@ int main(int argc, char* argv[])
 
 	glEnable(GL_DEPTH_TEST);
 
-	
-
 	init();
 
-
 	glutMainLoop();
-
+	dropSoundEngine();
+	//remove this line.
 	return 0;
 }
