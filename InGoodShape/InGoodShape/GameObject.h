@@ -14,9 +14,9 @@ public:
 	~GameObject();
 
 
-	Vec3f position;
-	Vec3f rotation;
-	Vec3f scale = Vec3f(1,1,1);
+	::Vec3f position;
+	::Vec3f rotation;
+	::Vec3f scale = ::Vec3f(1,1,1);
 
 	std::list<DrawComponent*> drawComponents;
 
