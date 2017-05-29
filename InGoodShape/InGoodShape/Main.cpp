@@ -418,11 +418,7 @@ int main(int argc, char* argv[])
 	init();
 
 	glutMainLoop();
-<<<<<<< HEAD
-
 	dropSoundEngine();
-
-=======
->>>>>>> c0a4b6112588636c6cdeafdf41da0f9d39f8ba0d
+	//remove this line.
 	return 0;
 }
