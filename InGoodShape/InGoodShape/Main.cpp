@@ -84,7 +84,7 @@ OptionMenu* optionMenu;
 
 bool selectedButtons[10];
 
-enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, EXIT } menuState;
+enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, _EXIT } menuState;
 
 // Prototype
 void switchMenu();
@@ -181,7 +181,7 @@ void keyboard(unsigned char key, int x, int  y)
 		if (keys['4'])
 		{
 			menu.selectButton(3);
-			if (menuState == MAIN) menuState = EXIT;
+			if (menuState == MAIN) menuState = _EXIT;
 		}
 		if (keys[13]) //enter key
 		{
@@ -419,7 +419,7 @@ void switchMenu()
 			optionMenu = new OptionMenu();
 		}
 		break;
-	case EXIT:
+	case _EXIT:
 		exit(0);
 		break;
 	}
@@ -506,6 +506,7 @@ int main(int argc, char* argv[])
 
 	init();
 
+	objectDetectTest();
 	glutMainLoop();
 	dropSoundEngine();
 	
