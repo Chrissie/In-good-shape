@@ -59,6 +59,7 @@ bool keys[256];
 
 int lastTime = 0;
 
+
 std::list<GameObject*> objects;
 
 Text* text;
@@ -272,6 +273,10 @@ void display()
 	if (keys['d'])
 	{
 		rotationY += deltaTime * 180;
+	}
+	if (keys['u'])
+	{
+		
 	}
 
 	int count = 0;

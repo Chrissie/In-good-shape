@@ -6,6 +6,7 @@
 
 extern bool selectedButtons[10];
 extern std::list<GameObject*> objects;
+extern float volume = 5;
 
 
 class Menu
