@@ -55,11 +55,12 @@
 int mouseX = 0;
 int mouseY = 0;
 
-int width = 1920;
-int height = 1080;
+//int width;
+//int height;
 
 float rotationX = 0;
 float rotationY = 0;
+float rotationZ = 0;
 float deltaTime;
 float mouseSpeedX = 0;
 float mouseSpeedY = 0;
@@ -73,6 +74,9 @@ float oldY = 0;
 bool keys[256];
 
 int lastTime = 0;
+
+int width = 1920;
+int height = 1080;
 
 
 std::list<GameObject*> objects;
@@ -136,6 +140,7 @@ void Main::BindCVMat2GLTexture(cv::Mat& image)
 			GL_UNSIGNED_BYTE,    // Image data type
 			data);        // The actual image data itself
 
+		glBindTexture(GL_TEXTURE_2D, textures[0]);
 	}
 }
 
@@ -346,18 +351,19 @@ void display()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
-	glPushMatrix();
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, 0, 0);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(0, 1000, 0);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(1000, 1000, 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(1000, 0, 0);
-	glEnd();
-	glPopMatrix();
+	//glPushMatrix();
+	//glBegin(GL_QUADS);
+	//glTexCoord2f(0.0f, 1.0f);
+	//glVertex3f(0, 0, 0);
+	//glTexCoord2f(1.0f, 1.0f);
+	//glVertex3f(0, 1000, 0);
+	//glTexCoord2f(1.0f, 0.0f);
+	//glVertex3f(1000, 1000, 0);
+	//glTexCoord2f(0.0f, 0.0f);
+	//glVertex3f(1000, 0, 0);
+	//glEnd();
+	//glPopMatrix();
+	
 
 
 	int count = 0;
@@ -489,7 +495,16 @@ void idle()
 
 
 	for (auto &o : objects)
+	{
+		if(menuState == START && playScreen != nullptr && o != objects.front())
+		{
+			o->rotation.x = rotationX;
+			o->rotation.y = rotationY;
+			o->rotation.z = rotationZ;
+		}
 		o->update(deltaTime);
+	}
+
 
 	glutPostRedisplay();
 }

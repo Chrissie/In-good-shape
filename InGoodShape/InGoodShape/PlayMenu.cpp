@@ -4,6 +4,9 @@
 #include "blobdetectionavans.h"
 #include "Main.h"
 #include <opencv2/imgproc/imgproc.hpp>
+#include "CubeComponent.h"
+#include "SpinComponent.h"
+#include "PyramidComponent.h"
 
 cv::Mat frame;
 
@@ -12,9 +15,19 @@ cv::Mat frame;
 PlayMenu::PlayMenu()
 {
 	GameObject* title = new GameObject();
-	title->addComponent(new MenuComponent("Play the game!"));
+	title->addComponent(new MenuComponent("Play the game !!!"));
 	title->position = ::Vec3f(-400, 4, 0);
 	objects.push_back(title);
+
+	GameObject* cube = new GameObject();
+	cube->addComponent(new CubeComponent(2));
+	cube->position = ::Vec3f(0, -2, 0);
+	objects.push_back(cube);
+
+	GameObject* pyramid = new GameObject();
+	pyramid->addComponent(new PyramidComponent(2, 3));
+	pyramid->position = ::Vec3f(0, 0, 0);
+	objects.push_back(pyramid);
 }
 
 
@@ -24,7 +37,7 @@ PlayMenu::~PlayMenu()
 
 void PlayMenu::update()
 {
-	
+		
 }
 
 void PlayMenu::draw()
@@ -49,30 +62,28 @@ void PlayMenu::drawCamera()
 
 	//black.copyTo(frame, mask);
 
-	glEnable(GL_TEXTURE_2D);
 	Main::BindCVMat2GLTexture(frame);
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0.0f, 1.0f);
-	//glVertex2f(50, 50);
-	//glTexCoord2f(1.0f, 1.0f);
-	//glVertex2f(1600, 50);
-	//glTexCoord2f(1.0f, 0.0f);
-	//glVertex2f(1600, 1000);
-	//glTexCoord2f(0.0f, 0.0f);
-	//glVertex2f(50, 1000);
+	glEnable(GL_TEXTURE_2D);
+	glUseProgram(0);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 1, 0, 1, -10, 10);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	//front
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, 0, 0);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(0, 1000, 0);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(1000, 1000, 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(1000, 0, 0);
+	//glBegin(GL_QUADS);
+	//glTexCoord2f(0.0f, 1.0f);
+	//glVertex3f(0, 0, 0);
+	//glTexCoord2f(1.0f, 1.0f);
+	//glVertex3f(0, 1, 0);
+	//glTexCoord2f(1.0f, 0.0f);
+	//glVertex3f(1, 1, 0);
+	//glTexCoord2f(0.0f, 0.0f);
+	//glVertex3f(1, 0, 0);
 
-	glEnd();
+	//glEnd();
 
-	imshow("hello Duc", frame);
+	//imshow("hello Duc", frame);
 }
