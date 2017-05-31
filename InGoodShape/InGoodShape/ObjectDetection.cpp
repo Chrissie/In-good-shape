@@ -1,4 +1,6 @@
 #include "ObjectDetection.h"
+#include "math.h"
+#include <algorithm>
 
 /**
 * Helper function to find a cosine of angle between vectors
@@ -57,18 +59,108 @@ void objectDetectTest()
 			cv::imshow("bw", bw);
 
 			// Find contours
-			cv::findContours(bw.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+			cv::findContours(bw.clone(), contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
 			src.copyTo(dst);
 
-			for (int i = 0; i < contours.size(); i++)
+
+			for (int i = 0; i < contours.size() - 1; i++)
 			{
 				// Approximate contour with accuracy proportional
 				// to the contour perimeter
 				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-				// Skip small or non-convex objects 
-				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+				//skip small objects
+				if (std::fabs(cv::contourArea(contours[i])) < 100)
+					continue;
+
+				if (approx.size() == 7)
+				{
+
+					std::vector<Point> contour = contours[i];
+					// Number of vertices of polygonal curve
+					int vtc = approx.size();
+
+					//get the middel point of the bounding rectangle
+					//cv::Rect r = cv::boundingRect(contours[i]);
+					//cv::Point middelPoint(r.x + ((r.width) / 2), r.y + ((r.height) / 2));
+
+					int xmid = 0;
+					int ymid = 0;
+					for (int i = 0; i < approx.size() ; i++)
+					{
+						xmid += approx[i].x;
+						ymid += approx[i].y;
+					}
+					cv::Point middelPoint(xmid / approx.size(), ymid / approx.size());
+
+					std::vector<double> distancesToCenter;
+					std::vector<double> sortedDistances;
+
+					for (int x = 0; x < approx.size(); x++) {
+						distancesToCenter.push_back(sqrt((double)((middelPoint.x - approx[x].x)*(middelPoint.x - approx[x].x) + (middelPoint.y - approx[x].y)*(middelPoint.y - approx[x].y))));
+						sortedDistances.push_back(sqrt((double)((middelPoint.x - approx[x].x)*(middelPoint.x - approx[x].x) + (middelPoint.y - approx[x].y)*(middelPoint.y - approx[x].y))));
+					}
+
+					Point pointOfArrow;
+					std::sort(sortedDistances.begin(), sortedDistances.end());
+
+					for (int y = 0; y < distancesToCenter.size(); y++) {
+						if (distancesToCenter[y] == sortedDistances[6]) {
+							pointOfArrow = approx[y];
+							break;
+						}
+					}
+
+					cv::line(dst, pointOfArrow, middelPoint, COLORMAP_BONE, 4);
+
+					//// Get the cosines of all corners
+					//std::vector<double> cosines;
+					//for (int j = 2; j < vtc + 1; j++) 
+					//	cosines.push_back(angle(approx[j%vtc], approx[j - 2], approx[j - 1]));
+
+					//// Get the 4 points of the rectangle of the arrow
+					//std::vector<Point> square;
+					//for (int x = 0; x < approx.size() - 1; x++) {
+					//	if (abs(cosines[x]) < cos((80 * CV_PI) / 180)) {
+					//		square.push_back(approx[x]);
+					//	}
+					//}
+
+					/*if (square.size() != 4)
+					continue;
+					*/
+					/*
+
+					for (int x = 0; x < approx.size() - 1; x++) {
+
+					cv::line(dst, approx[x], approx[x + 1], COLORMAP_BONE, 20);
+					}
+					*/
+
+
+
+
+					string arrowstring;
+					double arrowAngle = 0;
+					arrowAngle = acos((double)((pointOfArrow.x - middelPoint.x) /sortedDistances[6]));
+
+					if (arrowAngle < 0.25*CV_PI && arrowAngle > -0.25*CV_PI)
+						arrowstring = "left";
+					else if (arrowAngle < 1.25*CV_PI && arrowAngle > 0.75*CV_PI)
+						arrowstring = "right";
+					else if (pointOfArrow.y < middelPoint.y)
+						arrowstring = "up";
+					else if (pointOfArrow.y > middelPoint.y)
+						arrowstring = "down";
+
+					if (!isContourConvex(approx))
+						setLabel(dst, arrowstring, contours[i]);
+
+				}
+
+				// Skip non-convex objects 
+				if (!isContourConvex(approx))
 					continue;
 
 				if (approx.size() == 3)
@@ -101,32 +193,9 @@ void objectDetectTest()
 					else if (vtc == 6)
 						setLabel(dst, "HEXAGON", contours[i]);
 				}
-				else if (approx.size() == 7)
-				{
-					// Number of vertices of polygonal curve
-					int vtc = approx.size();
 
-					// Get the cosines of all corners
-					std::vector<double> cos;
-					for (int j = 2; j < vtc + 1; j++)
-						cos.push_back(angle(approx[j%vtc], approx[j - 2], approx[j - 1]));
+				else {
 
-					// Sort ascending the cosine values
-					std::sort(cos.begin(), cos.end());
-
-					// Get the lowest and the highest cosine
-					double mincos = cos.front();
-					double maxcos = cos.back();
-
-					if (mincos < 70 && maxcos > 80)
-					{
-						if (vtc == 7)
-							setLabel(dst, "ARROW", contours[i]);
-					}
-
-				}
-				else
-				{
 					// Detect and label circles
 					double area = cv::contourArea(contours[i]);
 					cv::Rect r = cv::boundingRect(contours[i]);
