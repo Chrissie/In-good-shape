@@ -63,7 +63,6 @@ void objectDetectTest()
 
 			src.copyTo(dst);
 
-
 			for (int i = 0; i < contours.size() - 1; i++)
 			{
 				// Approximate contour with accuracy proportional
@@ -71,7 +70,7 @@ void objectDetectTest()
 				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
 				//skip small objects
-				if (std::fabs(cv::contourArea(contours[i])) < 100)
+				if (std::fabs(cv::contourArea(contours[i])) < 2500)
 					continue;
 
 				if (approx.size() == 7)
@@ -111,27 +110,10 @@ void objectDetectTest()
 							break;
 						}
 					}
-
-					cv::line(dst, pointOfArrow, middelPoint, COLORMAP_BONE, 4);
-
-					//// Get the cosines of all corners
-					//std::vector<double> cosines;
-					//for (int j = 2; j < vtc + 1; j++) 
-					//	cosines.push_back(angle(approx[j%vtc], approx[j - 2], approx[j - 1]));
-
-					//// Get the 4 points of the rectangle of the arrow
-					//std::vector<Point> square;
-					//for (int x = 0; x < approx.size() - 1; x++) {
-					//	if (abs(cosines[x]) < cos((80 * CV_PI) / 180)) {
-					//		square.push_back(approx[x]);
-					//	}
-					//}
-
-					/*if (square.size() != 4)
-					continue;
-					*/
+					
+					//cv::line(dst, pointOfArrow, middelPoint, COLORMAP_BONE, 4);
+					
 					/*
-
 					for (int x = 0; x < approx.size() - 1; x++) {
 
 					cv::line(dst, approx[x], approx[x + 1], COLORMAP_BONE, 20);
@@ -154,8 +136,9 @@ void objectDetectTest()
 					else if (pointOfArrow.y > middelPoint.y)
 						arrowstring = "down";
 
-					if (!isContourConvex(approx))
+					if (!isContourConvex(approx)) {
 						setLabel(dst, arrowstring, contours[i]);
+					}
 
 				}
 
@@ -206,6 +189,7 @@ void objectDetectTest()
 						setLabel(dst, "CIRCLE", contours[i]);
 				}
 			}
+			
 			cv::imshow("src", src);
 			cv::imshow("dst", dst);
 
