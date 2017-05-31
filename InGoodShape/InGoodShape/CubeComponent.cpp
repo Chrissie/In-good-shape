@@ -16,6 +16,7 @@ CubeComponent::~CubeComponent()
 
 void CubeComponent::draw()
 {
+	glDisable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
 	glColor3f(1, 0, 0);
 	glVertex3f(-size, -size, -size);
