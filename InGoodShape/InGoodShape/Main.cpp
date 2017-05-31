@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -45,6 +46,7 @@
 #include "InstructionMenu.h"
 #include "PlayMenu.h"
 #include "OptionMenu.h"
+#include "Main.h"
 
 //sound
 #include "Sound.h"
@@ -53,11 +55,12 @@
 int mouseX = 0;
 int mouseY = 0;
 
-int width = 1920;
-int height = 1080;
+//int width;
+//int height;
 
 float rotationX = 0;
 float rotationY = 0;
+float rotationZ = 0;
 float deltaTime;
 float mouseSpeedX = 0;
 float mouseSpeedY = 0;
@@ -71,6 +74,10 @@ float oldY = 0;
 bool keys[256];
 
 int lastTime = 0;
+
+int width = 1920;
+int height = 1080;
+
 
 std::list<GameObject*> objects;
 
@@ -90,7 +97,7 @@ void switchMenu();
 
 
 cv::VideoCapture cap(0);
-cv::Mat frame;
+//cv::Mat frame;
 GLuint *textures = new GLuint[1]{ 0 };
 
 //returns true if init was succesful, else return false
@@ -99,7 +106,7 @@ bool cvInit()
 	return cap.read(frame);
 }
 
-void BindCVMat2GLTexture(cv::Mat& image)
+void Main::BindCVMat2GLTexture(cv::Mat& image)
 {
 	if (image.empty()) {
 		std::cout << "image empty" << std::endl;
@@ -133,6 +140,7 @@ void BindCVMat2GLTexture(cv::Mat& image)
 			GL_UNSIGNED_BYTE,    // Image data type
 			data);        // The actual image data itself
 
+		glBindTexture(GL_TEXTURE_2D, textures[0]);
 	}
 }
 
@@ -340,23 +348,23 @@ void display()
 		0, 0, 0,
 		0, 1, 0);
 
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	//draw cube
-	glPushMatrix();
-	glTranslatef(xPos, yPos, 4);
 
-
-	//draw cube
 	//glPushMatrix();
-	//glTranslatef(xPos, yPos, 0);
+	//glBegin(GL_QUADS);
+	//glTexCoord2f(0.0f, 1.0f);
+	//glVertex3f(0, 0, 0);
+	//glTexCoord2f(1.0f, 1.0f);
+	//glVertex3f(0, 1000, 0);
+	//glTexCoord2f(1.0f, 0.0f);
+	//glVertex3f(1000, 1000, 0);
+	//glTexCoord2f(0.0f, 0.0f);
+	//glVertex3f(1000, 0, 0);
+	//glEnd();
+	//glPopMatrix();
+	
 
-	glTranslatef(0.5, 0.5, -0.5);
-	glRotatef(rotationX, 1, 0, 0);
-	glRotatef(rotationY, 0, 1, 0);
-	glTranslatef(-0.5, -0.5, 0.5);
-
-	drawCube();
-	glPopMatrix();
 
 	int count = 0;
 	for (auto &o : objects)
@@ -374,15 +382,41 @@ void display()
 		o->draw();
 	}
 
+
+
+
+
+	//draw cube
+	//glPushMatrix();
+	//glTranslatef(xPos, yPos, 4);
+
 	
+	//draw cube
+	//glPushMatrix();
+	//glTranslatef(0, 0, 0);
+
+	//glTranslatef(0.5, 0.5, -0.5);
+	//glRotatef(rotationX, 1, 0, 0);
+	//glRotatef(rotationY, 0, 1, 0);
+	//glTranslatef(-0.5, -0.5, 0.5);
+
+	//drawCube();
+	//glPopMatrix();
 
 	//text->RenderText("IN GOOD SHAPE", (width/8), height/1.2, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
+	//glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+
+
+
+
+
+	if (playScreen)
+		playScreen->draw();
+
+
 	glutSwapBuffers();
-	/*if (playScreen != nullptr)
-	{
-		playScreen->updateTexture(textures[0]);
-	}*/
 }
 
 void switchMenu()
@@ -434,7 +468,7 @@ void idle()
 {
 	if (cap.read(frame))
 	{
-		BindCVMat2GLTexture(frame);
+		Main::BindCVMat2GLTexture(frame);
 	}
 
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
@@ -461,7 +495,16 @@ void idle()
 
 
 	for (auto &o : objects)
+	{
+		if(menuState == START && playScreen != nullptr && o != objects.front())
+		{
+			o->rotation.x = rotationX;
+			o->rotation.y = rotationY;
+			o->rotation.z = rotationZ;
+		}
 		o->update(deltaTime);
+	}
+
 
 	glutPostRedisplay();
 }
@@ -489,9 +532,9 @@ int main(int argc, char* argv[])
 	glutFullScreen();
 	text->initText(width, height);
 
-	if (cvInit())
+	if (cvInit() && menuState == START)
 	{
-		BindCVMat2GLTexture(frame);
+		Main::BindCVMat2GLTexture(frame);
 		glBindTexture(GL_TEXTURE_2D, textures[0]);
 		glEnable(GL_TEXTURE_2D);
 	}

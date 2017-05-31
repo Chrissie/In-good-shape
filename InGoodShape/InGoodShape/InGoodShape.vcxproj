@@ -159,6 +159,7 @@
     <ClCompile Include="OptionMenu.cpp" />
     <ClCompile Include="PlayMenu.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="SliderComponent.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\Text.cpp" />
   </ItemGroup>
@@ -176,12 +177,14 @@
     <ClInclude Include="DrawComponent.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InstructionMenu.h" />
+    <ClInclude Include="Main.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuComponent.h" />
     <ClInclude Include="OptionMenu.h" />
     <ClInclude Include="PlayMenu.h" />
     <ClInclude Include="PyramidComponent.h" />
+    <ClInclude Include="SliderComponent.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SpinComponent.h" />
     <ClInclude Include="Vec.h" />

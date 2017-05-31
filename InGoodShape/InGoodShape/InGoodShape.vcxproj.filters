@@ -17,6 +17,7 @@
     <ClCompile Include="InstructionMenu.cpp" />
     <ClCompile Include="PlayMenu.cpp" />
     <ClCompile Include="OptionMenu.cpp" />
+    <ClCompile Include="SliderComponent.cpp" />
     <ClCompile Include="Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -35,7 +36,9 @@
     <ClInclude Include="InstructionMenu.h" />
     <ClInclude Include="PlayMenu.h" />
     <ClInclude Include="OptionMenu.h" />
+    <ClInclude Include="SliderComponent.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="Main.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">
