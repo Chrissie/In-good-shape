@@ -2,6 +2,7 @@
 #include "MenuComponent.h"
 #include "SpinComponent.h"
 #include "CubeComponent.h"
+#include "SliderComponent.h"
 
 
 OptionMenu::OptionMenu()
@@ -12,6 +13,18 @@ OptionMenu::OptionMenu()
 	backButton->addComponent(new MenuComponent("BACK"));
 	backButton->position = Vec3f(-4, -4, 0);
 	objects.push_back(backButton);
+
+	//GameObject* volumeCube = new GameObject();
+	//volumeCube->addComponent(new CubeComponent(0.1));
+	//volumeCube->addComponent(new SpinComponent(25, true, true, true));
+	//volumeCube->position = Vec3f(-4, 0.05, 0);
+	//objects.push_back(volumeCube);
+
+	GameObject* slider = new GameObject();
+	slider->addComponent(new SliderComponent(10, 1));
+	slider->position = Vec3f(-4, 0, 0);
+	objects.push_back(slider);
+
 
 	GameObject* title = new GameObject();
 	title->addComponent(new MenuComponent("OPTIONS"));
