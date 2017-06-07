@@ -178,6 +178,7 @@ void Text::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
 }
 
 //void display()

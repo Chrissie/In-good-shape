@@ -335,6 +335,7 @@ void drawCube()
 void display()
 {
 	glUseProgram(0);	// Important to use the correct program ID.
+
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -348,23 +349,14 @@ void display()
 		0, 0, 0,
 		0, 1, 0);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-	//glPushMatrix();
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0.0f, 1.0f);
-	//glVertex3f(0, 0, 0);
-	//glTexCoord2f(1.0f, 1.0f);
-	//glVertex3f(0, 1000, 0);
-	//glTexCoord2f(1.0f, 0.0f);
-	//glVertex3f(1000, 1000, 0);
-	//glTexCoord2f(0.0f, 0.0f);
-	//glVertex3f(1000, 0, 0);
-	//glEnd();
-	//glPopMatrix();
 	
-
+	if (playScreen)
+		playScreen->draw();
 
 	int count = 0;
 	for (auto &o : objects)
@@ -381,42 +373,25 @@ void display()
 		count++;
 		o->draw();
 	}
-
-
-
-
-
-	//draw cube
-	//glPushMatrix();
-	//glTranslatef(xPos, yPos, 4);
-
 	
-	//draw cube
-	//glPushMatrix();
-	//glTranslatef(0, 0, 0);
-
-	//glTranslatef(0.5, 0.5, -0.5);
-	//glRotatef(rotationX, 1, 0, 0);
-	//glRotatef(rotationY, 0, 1, 0);
-	//glTranslatef(-0.5, -0.5, 0.5);
-
-	//drawCube();
-	//glPopMatrix();
-
-	//text->RenderText("IN GOOD SHAPE", (width/8), height/1.2, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	//glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-
-
-
-
-
 	if (playScreen)
-		playScreen->draw();
-
+	{
+		glUseProgram(0);
+		glPushMatrix();
+		glTranslatef(-8, -6, -1.4);
+		glScaled(16, 12, 1);
+		glBegin(GL_QUADS);
+		glColor4f(0, 0, 0, 0.5);
+		glVertex3f(1.0, 1.0, 0);
+		glVertex3f(1.0, 0.0, 0);
+		glVertex3f(0.0, 0.0, 0);
+		glVertex3f(0.0, 1.0, 0);
+		glEnd();
+		glPopMatrix();
+	}
 
 	glutSwapBuffers();
+
 }
 
 void switchMenu()
@@ -525,7 +500,7 @@ int main(int argc, char* argv[])
 	soundInit();
 	toggleBackgroundMusic();
 
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");

@@ -20,14 +20,14 @@ PlayMenu::PlayMenu()
 	objects.push_back(title);
 
 	GameObject* cube = new GameObject();
-	cube->addComponent(new CubeComponent(2));
+	cube->addComponent(new CubeComponent(1));
 	cube->position = ::Vec3f(0, -2, 0);
 	objects.push_back(cube);
 
-	GameObject* pyramid = new GameObject();
-	pyramid->addComponent(new PyramidComponent(2, 3));
+	/*GameObject* pyramid = new GameObject();
+	pyramid->addComponent(new PyramidComponent(1, 1.5));
 	pyramid->position = ::Vec3f(0, 0, 0);
-	objects.push_back(pyramid);
+	objects.push_back(pyramid);*/
 }
 
 
@@ -45,7 +45,32 @@ void PlayMenu::draw()
 	drawCamera();
 }
 
+void PlayMenu::drawCameraWithOverlay()
+{
+	Main::BindCVMat2GLTexture(frame);
+	glEnable(GL_TEXTURE_2D);
+	glUseProgram(0);
 
+	glPushMatrix();
+	glTranslatef(-8, -6, -1.45);
+	glScaled(16, 12, 0);
+	glAlphaFunc(GL_LESS, 0.5);
+	glBegin(GL_QUADS);
+	glColor4f(0, 0, 0, 0.5);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(1.0, 1.0, 0);
+
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(1.0, 0.0, 0);
+
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(0.0, 0.0, 0);
+
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(0.0, 1.0, 0);
+	glEnd();
+	glPopMatrix();
+}
 
 void PlayMenu::drawCamera()
 {
@@ -66,24 +91,30 @@ void PlayMenu::drawCamera()
 	glEnable(GL_TEXTURE_2D);
 	glUseProgram(0);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, 1, 0, 1, -10, 10);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//glOrtho(0, 1, 0, 1, -10, 10);
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
 
 	//front
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0.0f, 1.0f);
-	//glVertex3f(0, 0, 0);
-	//glTexCoord2f(1.0f, 1.0f);
-	//glVertex3f(0, 1, 0);
-	//glTexCoord2f(1.0f, 0.0f);
-	//glVertex3f(1, 1, 0);
-	//glTexCoord2f(0.0f, 0.0f);
-	//glVertex3f(1, 0, 0);
+	
+	glColor4f(1, 1, 1, 1);
+	glPushMatrix();
+	glTranslatef(-8, -6, -1.5);
+	glScaled(16, 12, 1);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(1.0, 1.0, 0);
+	
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(1.0, 0.0, 0);
+	
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(0.0, 0.0, 0);
 
-	//glEnd();
-
-	//imshow("hello Duc", frame);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(0.0, 1.0, 0);
+	glEnd();
+	glPopMatrix();
 }
