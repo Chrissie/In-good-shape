@@ -2,6 +2,7 @@
 #include "Menu.h"
 #include <opencv2/core/mat.hpp>
 
+class Main;
 
 class PlayMenu : Menu
 {
@@ -11,5 +12,6 @@ public:
 	virtual void update();
 	virtual void draw();
 	void drawCamera();
+	void switchLevel();
 };
 

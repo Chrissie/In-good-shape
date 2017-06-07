@@ -7,9 +7,17 @@
 #include "CubeComponent.h"
 #include "SpinComponent.h"
 #include "PyramidComponent.h"
+#include "HouseComponent.h"
+
 
 cv::Mat frame;
 
+GameObject* scoreObject;
+GameObject* levelObject;
+GameObject* totalScoreObject;
+
+float middleX, middleY;
+int currentLevel;
 
 
 PlayMenu::PlayMenu()
@@ -19,15 +27,39 @@ PlayMenu::PlayMenu()
 	title->position = ::Vec3f(-400, 4, 0);
 	objects.push_back(title);
 
-	GameObject* cube = new GameObject();
-	cube->addComponent(new CubeComponent(2));
-	cube->position = ::Vec3f(0, -2, 0);
-	objects.push_back(cube);
+	levelObject = new GameObject();
+	levelObject->addComponent(new MenuComponent("Level: " + std::to_string(level), 0.5));
+	levelObject->position = ::Vec3f(860, 5, 0);
+	objects.push_back(levelObject);
 
-	GameObject* pyramid = new GameObject();
-	pyramid->addComponent(new PyramidComponent(2, 3));
-	pyramid->position = ::Vec3f(0, 0, 0);
-	objects.push_back(pyramid);
+	scoreObject = new GameObject();
+	scoreObject->addComponent(new MenuComponent("Score: " + std::to_string(points), 0.5));
+	scoreObject->position = ::Vec3f(860, 4.5, 0);
+	objects.push_back(scoreObject);
+
+	totalScoreObject = new GameObject();
+	totalScoreObject->addComponent(new MenuComponent("Total score: " + std::to_string(totalPoints), 0.5));
+	totalScoreObject->position = ::Vec3f(860, 4, 0);
+	objects.push_back(totalScoreObject);
+
+
+	//GameObject* cube = new GameObject();
+	//cube->addComponent(new CubeComponent(2));
+	//cube->position = ::Vec3f(0, -2, 0);
+	//objects.push_back(cube);
+
+	//GameObject* pyramid = new GameObject();
+	//pyramid->addComponent(new PyramidComponent(2, 3));
+	//pyramid->position = ::Vec3f(0, 0, 0);
+	//objects.push_back(pyramid);
+
+	//GameObject* house = new GameObject();
+	//house->addComponent(new HouseComponent(2, 2, 3));
+	//house->position = ::Vec3f(0, 0, 0);
+	//objects.push_back(house);
+
+	currentLevel = level;
+	switchLevel();
 }
 
 
@@ -35,13 +67,63 @@ PlayMenu::~PlayMenu()
 {
 }
 
+void PlayMenu::switchLevel()
+{
+	if(level == 1)
+	{
+		GameObject* cube = new GameObject();
+		cube->addComponent(new CubeComponent(2));
+		cube->position = ::Vec3f(0, -2, 0);
+		objects.push_back(cube);
+	}
+	if(level == 2)
+	{
+		objects.pop_back();
+		GameObject* pyramid = new GameObject();
+		pyramid->addComponent(new PyramidComponent(2, 3));
+		pyramid->position = ::Vec3f(0, 0, 0);
+		objects.push_back(pyramid);
+	}
+	if(level == 3)
+	{
+		objects.pop_back();
+		GameObject* house = new GameObject();
+		house->addComponent(new HouseComponent(2, 2, 3));
+		house->position = ::Vec3f(0, 0, 0);
+		objects.push_back(house);
+	}
+
+}
+
+
 void PlayMenu::update()
 {
-		
+	if(scoreObject->getComponent<MenuComponent>() != nullptr)
+		scoreObject->getComponent<MenuComponent>()->title = "Score: " + to_string(points);
+	if (levelObject->getComponent<MenuComponent>() != nullptr)
+		levelObject->getComponent<MenuComponent>()->title = "Level: " + to_string(level);
+	if (totalScoreObject->getComponent<MenuComponent>() != nullptr)
+		totalScoreObject->getComponent<MenuComponent>()->title = "Total score: " + to_string(totalPoints);
+
+	if(currentLevel != level)
+	{
+		currentLevel = level;
+		switchLevel();
+	}
 }
 
 void PlayMenu::draw()
 {
+	//for (auto &o : gameModel)
+	//{
+	//	glPushMatrix();
+	//	glTranslatef(0, 0, 0);
+	//	o->draw();
+	//	glPopMatrix();
+	//}
+
+
+
 	drawCamera();
 }
 
@@ -72,7 +154,6 @@ void PlayMenu::drawCamera()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	//front
 	//glBegin(GL_QUADS);
 	//glTexCoord2f(0.0f, 1.0f);
 	//glVertex3f(0, 0, 0);
@@ -82,8 +163,9 @@ void PlayMenu::drawCamera()
 	//glVertex3f(1, 1, 0);
 	//glTexCoord2f(0.0f, 0.0f);
 	//glVertex3f(1, 0, 0);
-
 	//glEnd();
+
+
 
 	//imshow("hello Duc", frame);
 }

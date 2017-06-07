@@ -31,6 +31,7 @@
 #include "blobdetectionavans.h"
 
 // GL includes
+#include "Main.h"
 #include "Shader.h"
 #include "GameObject.h"
 #include "CubeComponent.h"
@@ -46,7 +47,7 @@
 #include "InstructionMenu.h"
 #include "PlayMenu.h"
 #include "OptionMenu.h"
-#include "Main.h"
+
 
 //sound
 #include "Sound.h"
@@ -78,6 +79,12 @@ int lastTime = 0;
 int width = 1920;
 int height = 1080;
 
+bool canRotate = true;
+
+int level = 1;	//displays current level in PlayMenu
+int points = 100;	//displays points in current level in PlayMenu
+int totalPoints = 999;	//displays total points from all played levels in PlayMenu
+bool isFilled[20];
 
 std::list<GameObject*> objects;
 
@@ -196,6 +203,11 @@ void keyboard(unsigned char key, int x, int  y)
 				selectedButtons[i] = false;
 			switchMenu();
 		}
+		if (keys[32])
+		{
+			canRotate = !canRotate;
+		}
+			
 	}
 }
 
@@ -226,17 +238,19 @@ void rotate(int x, int y)
 
 void mouseMotion(int x, int y)
 {
-	float deltaX = oldX - x;
-	float deltaY = oldY - y;
+	if(canRotate)
+	{
+		float deltaX = oldX - x;
+		float deltaY = oldY - y;
 
-	mouseSpeedX = (deltaX / deltaTime)/100;
-	mouseSpeedY = (deltaY / deltaTime)/100;
-	
-	rotate(x, y);
+		mouseSpeedX = (deltaX / deltaTime) / 100;
+		mouseSpeedY = (deltaY / deltaTime) / 100;
 
-	oldX = x;
-	oldY = y;
-	
+		rotate(x, y);
+
+		oldX = static_cast<float>(x);
+		oldY = static_cast<float>(y);
+	}
 }
 
 void moveCube(int key, int x, int y)
@@ -264,6 +278,8 @@ void init()
 	instructionMenu = nullptr;
 	playScreen = nullptr;
 	optionMenu = nullptr;
+	for (auto b : isFilled)
+		b = false;
 }
 
 void drawCube()
@@ -331,6 +347,16 @@ void drawCube()
 	glEnd();
 }
 
+void Main::drawFillTexture()
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void Main::drawWireframe()
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
 
 void display()
 {
@@ -351,20 +377,6 @@ void display()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
-	//glPushMatrix();
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0.0f, 1.0f);
-	//glVertex3f(0, 0, 0);
-	//glTexCoord2f(1.0f, 1.0f);
-	//glVertex3f(0, 1000, 0);
-	//glTexCoord2f(1.0f, 0.0f);
-	//glVertex3f(1000, 1000, 0);
-	//glTexCoord2f(0.0f, 0.0f);
-	//glVertex3f(1000, 0, 0);
-	//glEnd();
-	//glPopMatrix();
-	
-
 
 	int count = 0;
 	for (auto &o : objects)
@@ -379,10 +391,20 @@ void display()
 				spinComponent->stopSpin();
 		}
 		count++;
+
+
+
+		if(playScreen != nullptr && o != objects.front() && o->getComponent<MenuComponent>() == nullptr)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		} else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+			
+
 		o->draw();
 	}
-
-
 
 
 
@@ -406,10 +428,6 @@ void display()
 	//text->RenderText("IN GOOD SHAPE", (width/8), height/1.2, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-
-
-
 
 
 	if (playScreen)
@@ -492,6 +510,11 @@ void idle()
 		rotationY += deltaTime * 180;
 	}
 
+	if (keys['n'])
+		level=3;
+	if (keys['m'])
+		level=2;
+
 
 
 	for (auto &o : objects)
@@ -504,6 +527,8 @@ void idle()
 		}
 		o->update(deltaTime);
 	}
+	if(playScreen != nullptr)
+		playScreen->update();
 
 
 	glutPostRedisplay();
