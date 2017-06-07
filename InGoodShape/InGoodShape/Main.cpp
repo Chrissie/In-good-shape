@@ -1,5 +1,6 @@
 // Standard includes.
 #include <iostream>
+#include <thread>
 #include <map>
 #include <string>
 #include <algorithm>
@@ -85,7 +86,9 @@ bool canRotate = true;
 int level = 1;	//displays current level in PlayMenu
 int points = 100;	//displays points in current level in PlayMenu
 int totalPoints = 999;	//displays total points from all played levels in PlayMenu
-bool isFilled[20];
+bool isFilled[20];	// used to see which side of 3D object to fill
+int shape = -1;		// used for object detection
+int rotationspeed = 25; // used to rotate the gameObject in PlayMenu
 
 std::list<GameObject*> objects;
 
@@ -221,11 +224,25 @@ void rotate(int x, int y)
 {
 	if (x < oldX )
 	{
-		rotationY -= deltaTime * 180;
+		if(rotationX > 150 && rotationX < 210 )
+		{
+			rotationY -= deltaTime * 180;
+		} else
+		{
+			rotationY += deltaTime * 180;
+		}
+		
 	}
 	if (x > oldX)
-	{
-		rotationY += deltaTime * 180;
+	{ //+
+		if (rotationX < -150 && rotationX > -210)
+		{
+			rotationY -= deltaTime * 180;
+		}
+		else
+		{
+			rotationY += deltaTime * 180;
+		}
 	}
 	if (y < oldY)
 	{
@@ -485,6 +502,20 @@ void switchMenu()
 
 void idle()
 {
+	//int shape = objectDetectTest();
+	switch(shape)
+	{
+	case 0: menu.selectButton(0); std::cout << "selected 1" << std::endl;
+		break;
+	case 1: menu.selectButton(1); cout << "selected 2" << endl;
+		break;
+	case 2: menu.selectButton(2); cout << "selected 3" << endl;
+		break;
+	case 3: menu.selectButton(3); cout << "selected 4" << endl;
+		break;
+	default: break;
+	}
+
 	if (cap.read(frame))
 	{
 		Main::BindCVMat2GLTexture(frame);
@@ -493,23 +524,26 @@ void idle()
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentTime - lastTime) / 1000.0f;
 	lastTime = currentTime;
+	if (canRotate)
+	{
+		if (keys['w'] || shape == 0)
+		{
+			rotationX -= deltaTime * rotationspeed;
+		}
+		if (keys['s'] || shape == 2)
+		{
+			rotationX += deltaTime * rotationspeed;
+		}
+		if (keys['a'] || shape == 3)
+		{
+			rotationY -= deltaTime * rotationspeed;
+		}
+		if (keys['d'] || shape == 1)
+		{
+			rotationY += deltaTime * rotationspeed;
+		}
+	}
 
-	if (keys['w'])
-	{
-		rotationX -= deltaTime * 180;
-	}
-	if (keys['s'])
-	{
-		rotationX += deltaTime * 180;
-	}
-	if (keys['a'])
-	{
-		rotationY -= deltaTime * 180;
-	}
-	if (keys['d'])
-	{
-		rotationY += deltaTime * 180;
-	}
 
 	if (keys['n'])
 		level=3;
@@ -548,14 +582,14 @@ void mouseClick(int button, int state, int x, int y)
 int main(int argc, char* argv[])
 {
 	
-	//soundInit();
-	//toggleBackgroundMusic();
+	soundInit();
+	toggleBackgroundMusic();
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
-	glutFullScreen();
+	//glutFullScreen();
 	text->initText(width, height);
 
 	if (cvInit() && menuState == START)
@@ -579,9 +613,16 @@ int main(int argc, char* argv[])
 
 	init();
 
-	objectDetectTest();
+	//std::thread mainThread(glutMainLoop);
+	std::thread openCVThread(objectDetectTest);
+	//mainThread.join();
+	openCVThread.detach();
+
+	
+
+	//objectDetectTest();
 	glutMainLoop();
-	//dropSoundEngine();
+	dropSoundEngine();
 	
 	return 0;
 }

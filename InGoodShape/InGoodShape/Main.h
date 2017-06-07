@@ -14,7 +14,7 @@ extern int level;
 extern int points;
 extern int totalPoints;
 extern bool isFilled[20];
-
+extern int shape;
 
 class Main
 {
