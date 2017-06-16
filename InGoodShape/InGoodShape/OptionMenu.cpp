@@ -21,7 +21,7 @@ OptionMenu::OptionMenu()
 	//objects.push_back(volumeCube);
 
 	GameObject* slider = new GameObject();
-	slider->addComponent(new SliderComponent(10, 1));
+	slider->addComponent(new SliderComponent(10, 1, 5));
 	slider->position = Vec3f(-4, 0, 0);
 	objects.push_back(slider);
 

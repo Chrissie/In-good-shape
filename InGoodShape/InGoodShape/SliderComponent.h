@@ -8,8 +8,9 @@ class SliderComponent : public DrawComponent
 	int length;
 	Menu menu;
 	int size;
+	float pos;
 public:
-	SliderComponent(int length, int size);
+	SliderComponent(int length, int size, float pos);
 	~SliderComponent();
 
 	virtual void draw() override;

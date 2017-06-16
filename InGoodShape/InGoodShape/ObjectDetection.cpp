@@ -2,6 +2,9 @@
 #include "math.h"
 #include <algorithm>
 #include "Main.h"
+#include <GL/glew.h>
+#include <thread>
+#include <chrono>
 
 cv::Mat src;
 cv::Mat gray;
@@ -9,6 +12,7 @@ cv::Mat bw;
 cv::Mat dst;
 std::vector<std::vector<cv::Point> > contours;
 std::vector<cv::Point> approx;
+
 
 /**
 * Helper function to find a cosine of angle between vectors
@@ -50,183 +54,197 @@ int objectDetectTest()
 	//while (cvWaitKey(30) != 'q')
 	while(1)
 	{
-	cvWaitKey(30);
-	capture >> src;
-	if (true)
-	{
-		// Convert to grayscale
-		cv::cvtColor(src, gray, CV_BGR2GRAY);
-
-		// Use Canny instead of threshold to catch squares with gradient shading
-		blur(gray, bw, Size(3, 3));
-		cv::Canny(gray, bw, 80, 240, 3);
-		//cv::imshow("bw", bw);
-
-		// Find contours
-		cv::findContours(bw.clone(), contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-
-		if (contours.size() == 0) { continue; }
-
-		//src.copyTo(dst);
-
-		for (int i = 0; i < contours.size() - 1; i++)
+		//Sleep(500);
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		cvWaitKey(30);
+		capture >> src;
+		if (true)
 		{
-			// Approximate contour with accuracy proportional
-			// to the contour perimeter
-			cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
+			// Convert to grayscale
+			cv::cvtColor(src, gray, CV_BGR2GRAY);
 
-			//skip small objects
-			if (std::fabs(cv::contourArea(contours[i])) < 2500)
-				continue;
+			// Use Canny instead of threshold to catch squares with gradient shading
+			blur(gray, bw, Size(3, 3));
+			cv::Canny(gray, bw, 80, 240, 3);
+			cv::imshow("bw", bw);
 
-			if (approx.size() == 7)
+			// Find contours
+			cv::findContours(bw.clone(), contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+
+			if (contours.size() == 0) { continue; }
+
+			//src.copyTo(dst);
+
+			for (int i = 0; i < contours.size() - 1; i++)
 			{
+				// Approximate contour with accuracy proportional
+				// to the contour perimeter
+				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-				std::vector<Point> contour = contours[i];
-				// Number of vertices of polygonal curve
-				int vtc = approx.size();
+				//skip small objects
+				if (std::fabs(cv::contourArea(contours[i])) < 2500)
+					continue;
 
-				//get the middel point of the bounding rectangle
-				//cv::Rect r = cv::boundingRect(contours[i]);
-				//cv::Point middelPoint(r.x + ((r.width) / 2), r.y + ((r.height) / 2));
-
-				int xmid = 0;
-				int ymid = 0;
-				for (int i = 0; i < approx.size() ; i++)
+				if (approx.size() == 7)
 				{
-					xmid += approx[i].x;
-					ymid += approx[i].y;
-				}
-				cv::Point middelPoint(xmid / approx.size(), ymid / approx.size());
 
-				std::vector<double> distancesToCenter;
-				std::vector<double> sortedDistances;
+					std::vector<Point> contour = contours[i];
+					// Number of vertices of polygonal curve
+					int vtc = approx.size();
 
-				for (int x = 0; x < approx.size(); x++) {
-					distancesToCenter.push_back(sqrt((double)((middelPoint.x - approx[x].x)*(middelPoint.x - approx[x].x) + (middelPoint.y - approx[x].y)*(middelPoint.y - approx[x].y))));
-					sortedDistances.push_back(sqrt((double)((middelPoint.x - approx[x].x)*(middelPoint.x - approx[x].x) + (middelPoint.y - approx[x].y)*(middelPoint.y - approx[x].y))));
-				}
+					//get the middel point of the bounding rectangle
+					//cv::Rect r = cv::boundingRect(contours[i]);
+					//cv::Point middelPoint(r.x + ((r.width) / 2), r.y + ((r.height) / 2));
 
-				Point pointOfArrow;
-				std::sort(sortedDistances.begin(), sortedDistances.end());
-
-				for (int y = 0; y < distancesToCenter.size(); y++) {
-					if (distancesToCenter[y] == sortedDistances[6]) {
-						pointOfArrow = approx[y];
-						break;
+					int xmid = 0;
+					int ymid = 0;
+					for (int i = 0; i < approx.size() ; i++)
+					{
+						xmid += approx[i].x;
+						ymid += approx[i].y;
 					}
-				}
+					cv::Point middelPoint(xmid / approx.size(), ymid / approx.size());
+
+					std::vector<double> distancesToCenter;
+					std::vector<double> sortedDistances;
+
+					for (int x = 0; x < approx.size(); x++) {
+						distancesToCenter.push_back(sqrt((double)((middelPoint.x - approx[x].x)*(middelPoint.x - approx[x].x) + (middelPoint.y - approx[x].y)*(middelPoint.y - approx[x].y))));
+						sortedDistances.push_back(sqrt((double)((middelPoint.x - approx[x].x)*(middelPoint.x - approx[x].x) + (middelPoint.y - approx[x].y)*(middelPoint.y - approx[x].y))));
+					}
+
+					Point pointOfArrow;
+					std::sort(sortedDistances.begin(), sortedDistances.end());
+
+					for (int y = 0; y < distancesToCenter.size(); y++) {
+						if (distancesToCenter[y] == sortedDistances[6]) {
+							pointOfArrow = approx[y];
+							break;
+						}
+					}
 					
-				//cv::line(dst, pointOfArrow, middelPoint, COLORMAP_BONE, 4);
+					//cv::line(dst, pointOfArrow, middelPoint, COLORMAP_BONE, 4);
 					
-				/*
-				for (int x = 0; x < approx.size() - 1; x++) {
+					/*
+					for (int x = 0; x < approx.size() - 1; x++) {
 
-				cv::line(dst, approx[x], approx[x + 1], COLORMAP_BONE, 20);
-				}
-				*/
+					cv::line(dst, approx[x], approx[x + 1], COLORMAP_BONE, 20);
+					}
+					*/
 
-				string arrowstring;
-				double arrowAngle = 0;
-				arrowAngle = acos((double)((pointOfArrow.x - middelPoint.x) /sortedDistances[6]));
+					string arrowstring;
+					double arrowAngle = 0;
+					arrowAngle = acos((double)((pointOfArrow.x - middelPoint.x) /sortedDistances[6]));
 
-				if (arrowAngle < 0.25*CV_PI && arrowAngle > -0.25*CV_PI)
-				{
-					arrowstring = "left";
-					shape = 3;
-				}
-				else if (arrowAngle < 1.25*CV_PI && arrowAngle > 0.75*CV_PI)
-				{
-					arrowstring = "right";
-					shape = 1;
-				}
-				else if (pointOfArrow.y < middelPoint.y)
-				{
-					arrowstring = "up";
-					shape = 0;
-				}
-				else if (pointOfArrow.y > middelPoint.y)
-				{
-					arrowstring = "down";
-					shape = 2;
-				}
+					if (arrowAngle < 0.25*CV_PI && arrowAngle > -0.25*CV_PI)
+					{
+						arrowstring = "left";
+						shape = 3;
+						if (menuState == MAIN) menuState = _EXIT;
+					}
+					else if (arrowAngle < 1.25*CV_PI && arrowAngle > 0.75*CV_PI)
+					{
+						arrowstring = "right";
+						shape = 1;
+						if (menuState == MAIN) menuState = START;
+					}
+					else if (pointOfArrow.y < middelPoint.y)
+					{
+						arrowstring = "up";
+						shape = 0;
+						if (menuState == MAIN) menuState = INSTRUCTIONS;
+						else if (menuState == INSTRUCTIONS) menuState = MAIN;
+						else if (menuState == OPTIONS) menuState = MAIN;
+					}
+					else if (pointOfArrow.y > middelPoint.y)
+					{
+						arrowstring = "down";
+						shape = 2;
+						if (menuState == MAIN) menuState = OPTIONS;
+					}
 						
 
-				if (!isContourConvex(approx)) {
-					setLabel(src, arrowstring, contours[i]);
+					if (!isContourConvex(approx)) {
+						setLabel(src, arrowstring, contours[i]);
+					}
+
 				}
 
-			}
+				// Skip non-convex objects 
+				if (!isContourConvex(approx))
+					continue;
 
-			// Skip non-convex objects 
-			if (!isContourConvex(approx))
-				continue;
-
-			if (approx.size() == 3)
-			{
-				//setLabel(src, "TRIANGLE", contours[i]);    // Triangles
-			}
-			else if (approx.size() >= 4 && approx.size() <= 6)
-			{
-				// Number of vertices of polygonal curve
-				int vtc = approx.size();
-
-				// Get the cosines of all corners
-				std::vector<double> cos;
-				for (int j = 2; j < vtc + 1; j++)
-					cos.push_back(angle(approx[j%vtc], approx[j - 2], approx[j - 1]));
-
-				// Sort ascending the cosine values
-				std::sort(cos.begin(), cos.end());
-
-				// Get the lowest and the highest cosine
-				double mincos = cos.front();
-				double maxcos = cos.back();
-
-				// Use the degrees obtained above and the number of vertices
-				// to determine the shape of the contour
-
-				if (vtc == 4)
+				if (approx.size() == 3)
 				{
-					shape = 4;
-					setLabel(dst, "RECTANGLE", contours[i]);
+					//setLabel(src, "TRIANGLE", contours[i]);    // Triangles
 				}
-				else if (vtc == 5)
+				else if (approx.size() >= 4 && approx.size() <= 6)
 				{
-					shape = 5;
-					setLabel(dst, "PENTAGON", contours[i]);
+					// Number of vertices of polygonal curve
+					int vtc = approx.size();
+
+					// Get the cosines of all corners
+					std::vector<double> cos;
+					for (int j = 2; j < vtc + 1; j++)
+						cos.push_back(angle(approx[j%vtc], approx[j - 2], approx[j - 1]));
+
+					// Sort ascending the cosine values
+					std::sort(cos.begin(), cos.end());
+
+					// Get the lowest and the highest cosine
+					double mincos = cos.front();
+					double maxcos = cos.back();
+
+					// Use the degrees obtained above and the number of vertices
+					// to determine the shape of the contour
+
+					if (vtc == 4)
+					{
+						shape = 4;
+						setLabel(src, "RECTANGLE", contours[i]);
+					}
+					else if (vtc == 5)
+					{
+						shape = 5;
+						setLabel(src, "PENTAGON", contours[i]);
+					}
+					else if (vtc == 6)
+					{
+						shape = 6;
+						setLabel(src, "HEXAGON", contours[i]);
+					}
 				}
-				else if (vtc == 6)
-				{
-					shape = 6;
-					setLabel(dst, "HEXAGON", contours[i]);
+
+				else {
+
+					// Detect and label circles
+					double area = cv::contourArea(contours[i]);
+					cv::Rect r = cv::boundingRect(contours[i]);
+					int radius = r.width / 2;
+
+					if (std::abs(1 - ((double)r.width / r.height)) <= 0.2 &&
+						std::abs(1 - (area / (CV_PI * (radius*radius)))) <= 0.2)
+					{
+						setLabel(src, "CIRCLE", contours[i]);
+						if (playScreen == nullptr)
+							Main::switchMenu();
+						if(playScreen != nullptr)
+							canRotate = !canRotate;
+					}
 				}
 			}
-
-			else {
-
-				// Detect and label circles
-				double area = cv::contourArea(contours[i]);
-				cv::Rect r = cv::boundingRect(contours[i]);
-				int radius = r.width / 2;
-
-				if (std::abs(1 - ((double)r.width / r.height)) <= 0.2 &&
-					std::abs(1 - (area / (CV_PI * (radius*radius)))) <= 0.2);
-				setLabel(dst, "CIRCLE", contours[i]);
-			}
-		}
 			
-		cv::imshow("src", src);
-		//cv::imshow("dst", dst);
+			cv::imshow("src", src);
+			//cv::imshow("dst", dst);
 
-	}
-	//shape = 99999;
-	cout << shape << endl;
-	//return shape;
-		//else
-		//{
-		//	break;
-		//}
+		}
+		//shape = 99999;
+		cout << shape << endl;
+		//return shape;
+			//else
+			//{
+			//	break;
+			//}
 	}
 	return -1;
 }

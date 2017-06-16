@@ -1,5 +1,6 @@
 #pragma once
 #include "PlayMenu.h"
+#include "MainMenu.h"
 
 extern cv::Mat frame;
 extern int width;
@@ -15,6 +16,11 @@ extern int points;
 extern int totalPoints;
 extern bool isFilled[20];
 extern int shape;
+extern int volume;
+enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, _EXIT };
+extern MenuState menuState;
+extern MainMenu* mainMenu;
+extern PlayMenu* playScreen;
 
 class Main
 {
@@ -22,4 +28,5 @@ public:
 	static void BindCVMat2GLTexture(cv::Mat& image);
 	static void drawFillTexture();
 	static void drawWireframe();
+	static void switchMenu();
 };

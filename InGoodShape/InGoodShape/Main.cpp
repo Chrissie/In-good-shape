@@ -88,7 +88,11 @@ int points = 100;	//displays points in current level in PlayMenu
 int totalPoints = 999;	//displays total points from all played levels in PlayMenu
 bool isFilled[20];	// used to see which side of 3D object to fill
 int shape = -1;		// used for object detection
-int rotationspeed = 25; // used to rotate the gameObject in PlayMenu
+int rotationspeed = 50; // used to rotate the gameObject in PlayMenu
+int volume = 2;
+MenuState menuState; //used to switch from menu
+
+//std::thread openCVThread(objectDetectTest);
 
 std::list<GameObject*> objects;
 
@@ -101,10 +105,11 @@ OptionMenu* optionMenu;
 
 bool selectedButtons[10];
 
-enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, _EXIT } menuState;
+//enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, _EXIT } menuState;
+//menuState = Main;
 
-// Prototype
-void switchMenu();
+//// Prototype
+//void switchMenu();
 
 
 cv::VideoCapture cap(0);
@@ -203,15 +208,24 @@ void keyboard(unsigned char key, int x, int  y)
 		}
 		if (keys[13]) //enter key
 		{
-			for (int i = 0; i < sizeof(selectedButtons); i++)
-				selectedButtons[i] = false;
-			switchMenu();
+			/*for (int i = 0; i < sizeof(selectedButtons); i++)
+				selectedButtons[i] = false;*/
+			Main::switchMenu();
 		}
 		if (keys[32])
 		{
 			canRotate = !canRotate;
 		}
-			
+		if(keys['5'])
+		{
+			if(volume < 100)
+				volume++;
+		}
+		if(keys['6'])
+		{
+			if(volume > 0)
+				volume--;
+		}
 	}
 }
 
@@ -223,26 +237,13 @@ void keyboardUp(unsigned char key, int x, int y)
 void rotate(int x, int y)
 {
 	if (x < oldX )
-	{
-		if(rotationX > 150 && rotationX < 210 )
-		{
-			rotationY -= deltaTime * 180;
-		} else
-		{
-			rotationY += deltaTime * 180;
-		}
+	{ //-
+		rotationY -= deltaTime * 180;
 		
 	}
 	if (x > oldX)
 	{ //+
-		if (rotationX < -150 && rotationX > -210)
-		{
-			rotationY -= deltaTime * 180;
-		}
-		else
-		{
-			rotationY += deltaTime * 180;
-		}
+		rotationY += deltaTime * 180;
 	}
 	if (y < oldY)
 	{
@@ -455,8 +456,11 @@ void display()
 	glutSwapBuffers();
 }
 
-void switchMenu()
+void Main::switchMenu()
 {
+	for (int i = 0; i < sizeof(selectedButtons); i++)
+		selectedButtons[i] = false;
+	cout << "SwitchMenu" << endl;
 	switch (menuState)
 	{
 	case MAIN: 
@@ -521,26 +525,39 @@ void idle()
 		Main::BindCVMat2GLTexture(frame);
 	}
 
+	if (rotationX > 360) { rotationX -= 360; }
+	if (rotationX < -360) { rotationX += 360; }
+	if (rotationY > 360) { rotationY -= 360; }
+	if (rotationY < -360) { rotationY += 360; }
+
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = (currentTime - lastTime) / 1000.0f;
 	lastTime = currentTime;
+
+	int min = 90;
+	int max = 270;
 	if (canRotate)
 	{
 		if (keys['w'] || shape == 0)
-		{
+		{ //-
 			rotationX -= deltaTime * rotationspeed;
+			cout << rotationY << endl;
 		}
 		if (keys['s'] || shape == 2)
-		{
+		{//+
 			rotationX += deltaTime * rotationspeed;
+			cout << rotationY << endl;
 		}
 		if (keys['a'] || shape == 3)
-		{
+		{ //-
 			rotationY -= deltaTime * rotationspeed;
+			cout << rotationX << endl;
 		}
 		if (keys['d'] || shape == 1)
-		{
+		{ //+
 			rotationY += deltaTime * rotationspeed;
+			cout << rotationX << endl;
+
 		}
 	}
 
@@ -613,12 +630,10 @@ int main(int argc, char* argv[])
 
 	init();
 
-	//std::thread mainThread(glutMainLoop);
-	std::thread openCVThread(objectDetectTest);
-	//mainThread.join();
-	openCVThread.detach();
+	//comment next 2 lines to turn of object detection
+	//std::thread openCVThread(objectDetectTest);
+	//openCVThread.detach();
 
-	
 
 	//objectDetectTest();
 	glutMainLoop();
