@@ -1,12 +1,16 @@
-#include "PlayMenu.h"
 #include "MenuComponent.h"
 #include <GL/glew.h>
+#include <Windows.h>
 #include "blobdetectionavans.h"
 #include "Main.h"
-#include <opencv2/imgproc/imgproc.hpp>
+#include "PlayMenu.h"
+#include "opencv2/imgproc/imgproc.hpp" 
+#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/core/mat.hpp>
 #include "CubeComponent.h"
 #include "SpinComponent.h"
 #include "PyramidComponent.h"
+#include <iostream>
 
 cv::Mat frame;
 
@@ -72,6 +76,33 @@ void PlayMenu::drawCameraWithOverlay()
 	glPopMatrix();
 }
 
+void PlayMenu::drawCameraWhiteOverlay()
+{
+	Main::BindCVMat2GLTexture(frame);
+	glEnable(GL_TEXTURE_2D);
+	glUseProgram(0);
+
+	glPushMatrix();
+	glTranslatef(-8, -6, -1.45);
+	glScaled(16, 12, 0);
+	glAlphaFunc(GL_LESS, 0.5);
+	glBegin(GL_QUADS);
+	glColor4f(1, 1, 1, 1);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(1.0, 1.0, 0);
+
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(1.0, 0.0, 0);
+
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(0.0, 0.0, 0);
+
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(0.0, 1.0, 0);
+	glEnd();
+	glPopMatrix();
+}
+
 void PlayMenu::drawCamera()
 {
 	//Mat black(frame.rows, frame.cols, frame.type(), cv::Scalar::all(0));
@@ -117,4 +148,5 @@ void PlayMenu::drawCamera()
 	glVertex3f(0.0, 1.0, 0);
 	glEnd();
 	glPopMatrix();
+
 }

@@ -78,6 +78,8 @@ int lastTime = 0;
 int width = 1920;
 int height = 1080;
 
+int cvscreen = 0;
+bool screenshotMode = false;
 
 std::list<GameObject*> objects;
 
@@ -356,7 +358,9 @@ void display()
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	
 	if (playScreen)
-		playScreen->draw();
+	{
+			playScreen->draw();
+	}
 
 	int count = 0;
 	for (auto &o : objects)
@@ -376,22 +380,53 @@ void display()
 	
 	if (playScreen)
 	{
-		glUseProgram(0);
-		glPushMatrix();
-		glTranslatef(-8, -6, -1.4);
-		glScaled(16, 12, 1);
-		glBegin(GL_QUADS);
-		glColor4f(0, 0, 0, 0.5);
-		glVertex3f(1.0, 1.0, 0);
-		glVertex3f(1.0, 0.0, 0);
-		glVertex3f(0.0, 0.0, 0);
-		glVertex3f(0.0, 1.0, 0);
-		glEnd();
-		glPopMatrix();
+		if (cvscreen == 60)
+		{
+			screenshotMode = true;
+			glUseProgram(0);
+			glPushMatrix();
+			glTranslatef(-8, -6, -1.4);
+			glScaled(16, 12, 1);
+			glBegin(GL_QUADS);
+			glColor4f(1, 1, 1, 1);
+			glVertex3f(1.0, 1.0, 0);
+			glVertex3f(1.0, 0.0, 0);
+			glVertex3f(0.0, 0.0, 0);
+			glVertex3f(0.0, 1.0, 0);
+			glEnd();
+			glPopMatrix();
+			int roi = 840; //830 crashes, 850 crashes
+			BYTE* pixels = new BYTE[3 * roi * roi];
+			glReadPixels(520, 45, roi, roi, GL_BGR, GL_UNSIGNED_BYTE, pixels);
+			cv::Mat screenShot = cv::Mat(roi, roi, CV_8UC3, pixels);
+			flip(screenShot, screenShot, 0);
+			cv::imshow("screenshot", screenShot);
+			//cv::imwrite("screenshot.bmp", screenShot);
+			delete pixels;
+			cvscreen = 0;
+		}
+		else
+		{
+			screenshotMode = false;
+			glUseProgram(0);
+			glPushMatrix();
+			glTranslatef(-8, -6, -1.4);
+			glScaled(16, 12, 1);
+			glBegin(GL_QUADS);
+			glColor4f(0, 0, 0, 0.5);
+			glVertex3f(1.0, 1.0, 0);
+			glVertex3f(1.0, 0.0, 0);
+			glVertex3f(0.0, 0.0, 0);
+			glVertex3f(0.0, 1.0, 0);
+			glEnd();
+			glPopMatrix();
+			cvscreen++;
+		}
 	}
-
-	glutSwapBuffers();
-
+	if (!screenshotMode)
+	{
+		glutSwapBuffers();
+	}
 }
 
 void switchMenu()

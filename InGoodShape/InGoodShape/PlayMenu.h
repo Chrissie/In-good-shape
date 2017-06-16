@@ -1,6 +1,5 @@
 #pragma once
 #include "Menu.h"
-#include <opencv2/core/mat.hpp>
 
 
 class PlayMenu : Menu
@@ -12,5 +11,6 @@ public:
 	virtual void draw();
 	void drawCamera();
 	void drawCameraWithOverlay();
+	void drawCameraWhiteOverlay();
 };
 
