@@ -49,7 +49,7 @@ void PlayMenu::draw()
 	drawCamera();
 }
 
-void PlayMenu::drawCameraWithOverlay()
+void PlayMenu::drawPureCamera()
 {
 	Main::BindCVMat2GLTexture(frame);
 	glEnable(GL_TEXTURE_2D);
@@ -60,34 +60,7 @@ void PlayMenu::drawCameraWithOverlay()
 	glScaled(16, 12, 0);
 	glAlphaFunc(GL_LESS, 0.5);
 	glBegin(GL_QUADS);
-	glColor4f(0, 0, 0, 0.5);
-	glTexCoord2f(0.0, 0.0);
-	glVertex3f(1.0, 1.0, 0);
-
-	glTexCoord2f(0.0, 1.0);
-	glVertex3f(1.0, 0.0, 0);
-
-	glTexCoord2f(1.0, 1.0);
-	glVertex3f(0.0, 0.0, 0);
-
-	glTexCoord2f(1.0, 0.0);
-	glVertex3f(0.0, 1.0, 0);
-	glEnd();
-	glPopMatrix();
-}
-
-void PlayMenu::drawCameraWhiteOverlay()
-{
-	Main::BindCVMat2GLTexture(frame);
-	glEnable(GL_TEXTURE_2D);
-	glUseProgram(0);
-
-	glPushMatrix();
-	glTranslatef(-8, -6, -1.45);
-	glScaled(16, 12, 0);
-	glAlphaFunc(GL_LESS, 0.5);
-	glBegin(GL_QUADS);
-	glColor4f(1, 1, 1, 1);
+	//glColor4f(0, 0, 0, 0.5);
 	glTexCoord2f(0.0, 0.0);
 	glVertex3f(1.0, 1.0, 0);
 

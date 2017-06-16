@@ -333,7 +333,6 @@ void drawCube()
 	glEnd();
 }
 
-
 void display()
 {
 	glUseProgram(0);	// Important to use the correct program ID.
@@ -359,7 +358,19 @@ void display()
 	
 	if (playScreen)
 	{
-			playScreen->draw();
+		playScreen->draw();
+		//get pure camera screenshot
+		if (cvscreen >= 60)
+		{
+			int roi = 840; //830 crashes, 850 crashes
+			BYTE* pixels2 = new BYTE[3 * roi * roi];
+			glReadPixels(520, 45, roi, roi, GL_BGR, GL_UNSIGNED_BYTE, pixels2);
+			cv::Mat screenShot2 = cv::Mat(roi, roi, CV_8UC3, pixels2);
+			flip(screenShot2, screenShot2, 0);
+			cv::imshow("screenshot2", screenShot2);
+			cv::imwrite("C:\\Users\\Christiaan\\Desktop\\screenshot2.bmp", screenShot2);
+			delete pixels2;
+		}
 	}
 
 	int count = 0;
@@ -380,7 +391,7 @@ void display()
 	
 	if (playScreen)
 	{
-		if (cvscreen == 60)
+		if (cvscreen >= 60)
 		{
 			screenshotMode = true;
 			glUseProgram(0);
@@ -395,14 +406,15 @@ void display()
 			glVertex3f(0.0, 1.0, 0);
 			glEnd();
 			glPopMatrix();
+			
 			int roi = 840; //830 crashes, 850 crashes
 			BYTE* pixels = new BYTE[3 * roi * roi];
 			glReadPixels(520, 45, roi, roi, GL_BGR, GL_UNSIGNED_BYTE, pixels);
 			cv::Mat screenShot = cv::Mat(roi, roi, CV_8UC3, pixels);
 			flip(screenShot, screenShot, 0);
-			cv::imshow("screenshot", screenShot);
-			//cv::imwrite("screenshot.bmp", screenShot);
-			delete pixels;
+			//cv::imshow("screenshot", screenShot);
+			//cv::imwrite("C:\\Users\\Christiaan\\Desktop\\screenshot.bmp", screenShot);
+			delete pixels;			
 			cvscreen = 0;
 		}
 		else

@@ -19,6 +19,7 @@
     <ClCompile Include="OptionMenu.cpp" />
     <ClCompile Include="SliderComponent.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="ImageProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Shader.h" />
@@ -39,6 +40,7 @@
     <ClInclude Include="SliderComponent.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="ImageProcessor.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">

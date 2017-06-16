@@ -10,7 +10,6 @@ public:
 	virtual void update();
 	virtual void draw();
 	void drawCamera();
-	void drawCameraWithOverlay();
-	void drawCameraWhiteOverlay();
+	void drawPureCamera();
 };
 
