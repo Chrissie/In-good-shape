@@ -1,6 +1,7 @@
 #pragma once
 #include "PlayMenu.h"
 #include "MainMenu.h"
+#include "OptionMenu.h"
 
 extern cv::Mat frame;
 extern int width;
@@ -21,6 +22,11 @@ enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, _EXIT };
 extern MenuState menuState;
 extern MainMenu* mainMenu;
 extern PlayMenu* playScreen;
+extern OptionMenu* optionMenu;
+extern bool levelComplete;
+extern int filledPercentage;
+extern int oldFilledPercentage;
+extern int area;
 
 class Main
 {

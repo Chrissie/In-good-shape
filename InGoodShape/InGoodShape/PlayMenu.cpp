@@ -15,15 +15,16 @@ cv::Mat frame;
 GameObject* scoreObject;
 GameObject* levelObject;
 GameObject* totalScoreObject;
+GameObject* percentageObject;
 
 float middleX, middleY;
 int currentLevel;
 
-
 PlayMenu::PlayMenu()
 {
+	
 	GameObject* title = new GameObject();
-	title->addComponent(new MenuComponent("Play the game !!!"));
+	title->addComponent(new MenuComponent("IN GOOD SHAPE"));
 	title->position = ::Vec3f(-400, 4, 0);
 	objects.push_back(title);
 
@@ -42,21 +43,10 @@ PlayMenu::PlayMenu()
 	totalScoreObject->position = ::Vec3f(860, 4, 0);
 	objects.push_back(totalScoreObject);
 
-
-	//GameObject* cube = new GameObject();
-	//cube->addComponent(new CubeComponent(2));
-	//cube->position = ::Vec3f(0, -2, 0);
-	//objects.push_back(cube);
-
-	//GameObject* pyramid = new GameObject();
-	//pyramid->addComponent(new PyramidComponent(2, 3));
-	//pyramid->position = ::Vec3f(0, 0, 0);
-	//objects.push_back(pyramid);
-
-	//GameObject* house = new GameObject();
-	//house->addComponent(new HouseComponent(2, 2, 3));
-	//house->position = ::Vec3f(0, 0, 0);
-	//objects.push_back(house);
+	percentageObject = new GameObject();
+	percentageObject->addComponent(new MenuComponent("Filled:" + std::to_string(oldFilledPercentage) + "%", 0.5));
+	percentageObject->position = ::Vec3f(860, 3.5, 0);
+	objects.push_back(percentageObject);
 
 	currentLevel = level;
 	switchLevel();
@@ -72,8 +62,8 @@ void PlayMenu::switchLevel()
 	if(level == 1)
 	{
 		GameObject* cube = new GameObject();
-		cube->addComponent(new CubeComponent(2));
-		cube->position = ::Vec3f(0, -2, 0);
+		cube->addComponent(new CubeComponent(1.5));
+		cube->position = ::Vec3f(0, -1, 0);
 		objects.push_back(cube);
 	}
 	if(level == 2)
@@ -81,15 +71,15 @@ void PlayMenu::switchLevel()
 		objects.pop_back();
 		GameObject* pyramid = new GameObject();
 		pyramid->addComponent(new PyramidComponent(2, 3));
-		pyramid->position = ::Vec3f(0, 0, 0);
+		pyramid->position = ::Vec3f(0, -0.7, 0);
 		objects.push_back(pyramid);
 	}
 	if(level == 3)
 	{
 		objects.pop_back();
 		GameObject* house = new GameObject();
-		house->addComponent(new HouseComponent(2, 2, 3));
-		house->position = ::Vec3f(0, 0, 0);
+		house->addComponent(new HouseComponent(1.5, 1.5, 2.5));
+		house->position = ::Vec3f(0, -0.5, 0);
 		objects.push_back(house);
 	}
 
@@ -104,6 +94,8 @@ void PlayMenu::update()
 		levelObject->getComponent<MenuComponent>()->title = "Level: " + to_string(level);
 	if (totalScoreObject->getComponent<MenuComponent>() != nullptr)
 		totalScoreObject->getComponent<MenuComponent>()->title = "Total score: " + to_string(totalPoints);
+	if (percentageObject->getComponent<MenuComponent>() != nullptr)
+		percentageObject->getComponent<MenuComponent>()->title = "Filled:" + std::to_string(oldFilledPercentage) + "%";
 
 	if(currentLevel != level)
 	{

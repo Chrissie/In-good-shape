@@ -23,8 +23,8 @@ void soundInit()
 		return;
 	}
 
-	backgroundMusic = engine->play2D("MusicFiles/BackgroundMusic/Worldwar3.mp3", true, false, true);
-	backgroundMusic->setVolume(0.32);
+	backgroundMusic = engine->play2D("MusicFiles/BackgroundMusic/sandstorm.mp3", true, false, true);
+	backgroundMusic->setVolume(1);
 	backgroundMusic->setIsPaused(true);
 }
 
@@ -49,7 +49,7 @@ void SFXClick4() { engine->play2D("MusicFiles/SoundEffects/click4.wav", false); 
 void SFXClick5() { engine->play2D("MusicFiles/SoundEffects/click5.wav", false); }
 
 // Predefined sound effects
-void SFXSwitch1() { engine->play2D("MusicFiles/SoundEffects/switch1.wav", false); }
+void SFXSwitch1() { engine->play2D("MusicFiles/SoundEffects/levelComplete.mp3", false); }
 void SFXSwitch2() { engine->play2D("MusicFiles/SoundEffects/switch2.wav", false); }
 void SFXSwitch3() { engine->play2D("MusicFiles/SoundEffects/switch3.wav", false); }
 void SFXSwitch4() { engine->play2D("MusicFiles/SoundEffects/switch4.wav", false); }

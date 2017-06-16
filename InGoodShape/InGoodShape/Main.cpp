@@ -84,13 +84,18 @@ int height = 1080;
 bool canRotate = true;
 
 int level = 1;	//displays current level in PlayMenu
-int points = 100;	//displays points in current level in PlayMenu
-int totalPoints = 999;	//displays total points from all played levels in PlayMenu
+int points = 0;	//displays points in current level in PlayMenu
+int totalPoints = 0;	//displays total points from all played levels in PlayMenu
 bool isFilled[20];	// used to see which side of 3D object to fill
 int shape = -1;		// used for object detection
 int rotationspeed = 50; // used to rotate the gameObject in PlayMenu
-int volume = 2;
+int volume = 100;
 MenuState menuState; //used to switch from menu
+bool levelComplete = false; // used to check if level is completed
+bool drawLevelComplete = false; // used to draw green checkmark if level is completed
+int filledPercentage = 0.0;	//used to calculate points
+int oldFilledPercentage = 0.0; //used to check if player improved previous fill
+int area = 0; // used to calculate points
 
 //std::thread openCVThread(objectDetectTest);
 
@@ -173,8 +178,8 @@ void keyboard(unsigned char key, int x, int  y)
 	switch (key) {
 	case 27: exit(0);
 		break;
-	case 32: toggleBackgroundMusic();
-		break;
+	//case 32: toggleBackgroundMusic();
+	//	break;
 	case 'm': menuScrollSFX();
 		break;
 	default: //nothing
@@ -216,15 +221,15 @@ void keyboard(unsigned char key, int x, int  y)
 		{
 			canRotate = !canRotate;
 		}
-		if(keys['5'])
+		if(keys['5'] && optionMenu != nullptr)
 		{
-			if(volume < 100)
-				volume++;
+			if(volume <= 90)
+				setVolume((volume+=10) / 100.0f);
 		}
-		if(keys['6'])
+		if(keys['6'] && optionMenu != nullptr)
 		{
-			if(volume > 0)
-				volume--;
+			if(volume >= 10)
+				setVolume((volume-=10) / 100.0f);
 		}
 	}
 }
@@ -376,6 +381,26 @@ void Main::drawWireframe()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
+void handleLevelComplete()
+{
+	Main::drawFillTexture();
+	glDisable(GL_TEXTURE_2D);
+	glColor3f(0, 1, 0);
+	glBegin(GL_QUADS);
+
+	//left side
+	glVertex3f(-1.85f, -0.15f, 0.0f);
+	glVertex3f(0.1f, -1.7f, 0.0f);
+	glVertex3f(0.0f, -2.1f, 0.0f);
+	glVertex3f(-2.0f, -0.3f, 0.0f);
+
+	//right side
+	glVertex3f(0.0f, -2.1f, 0.0f);
+	glVertex3f(2.2f, 2.0f, 0.0f);
+	glVertex3f(2.0f, 2.1f, 0.0f);
+	glVertex3f(-0.2f, -1.8f, 0.0f);
+	glEnd();
+}
 
 void display()
 {
@@ -411,8 +436,6 @@ void display()
 		}
 		count++;
 
-
-
 		if(playScreen != nullptr && o != objects.front() && o->getComponent<MenuComponent>() == nullptr)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -425,28 +448,8 @@ void display()
 		o->draw();
 	}
 
-
-
-	//draw cube
-	//glPushMatrix();
-	//glTranslatef(xPos, yPos, 4);
-
-	
-	//draw cube
-	//glPushMatrix();
-	//glTranslatef(0, 0, 0);
-
-	//glTranslatef(0.5, 0.5, -0.5);
-	//glRotatef(rotationX, 1, 0, 0);
-	//glRotatef(rotationY, 0, 1, 0);
-	//glTranslatef(-0.5, -0.5, 0.5);
-
-	//drawCube();
-	//glPopMatrix();
-
-	//text->RenderText("IN GOOD SHAPE", (width/8), height/1.2, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-	//glBindTexture(GL_TEXTURE_2D, textures[0]);
+	if (drawLevelComplete)
+		handleLevelComplete();
 
 
 	if (playScreen)
@@ -561,13 +564,29 @@ void idle()
 		}
 	}
 
-
 	if (keys['n'])
-		level=3;
-	if (keys['m'])
-		level=2;
+		if(level < 3 && oldFilledPercentage >= 75.0)
+			level++;
+	//if (keys['m'])
+	//	level=2;
+
+	if (filledPercentage > oldFilledPercentage)
+	{
+		oldFilledPercentage = filledPercentage;
+		points =  area/1000 * oldFilledPercentage;
+	}
 
 
+	if(levelComplete)
+	{
+		levelComplete = false;
+		SFXSwitch1();
+		drawLevelComplete = true;
+		totalPoints += points;
+		points = 0;
+		filledPercentage = 0.0;
+		oldFilledPercentage = 0.0;
+	}
 
 	for (auto &o : objects)
 	{
@@ -581,7 +600,6 @@ void idle()
 	}
 	if(playScreen != nullptr)
 		playScreen->update();
-
 
 	glutPostRedisplay();
 }
@@ -598,7 +616,6 @@ void mouseClick(int button, int state, int x, int y)
 
 int main(int argc, char* argv[])
 {
-	
 	soundInit();
 	toggleBackgroundMusic();
 
@@ -623,7 +640,6 @@ int main(int argc, char* argv[])
 	glutKeyboardUpFunc(keyboardUp);
 	glutMouseFunc(mouseClick);
 	glutSpecialFunc(moveCube);
-
 	glutPassiveMotionFunc(mouseMotion);
 
 	glEnable(GL_DEPTH_TEST);
@@ -634,8 +650,6 @@ int main(int argc, char* argv[])
 	//std::thread openCVThread(objectDetectTest);
 	//openCVThread.detach();
 
-
-	//objectDetectTest();
 	glutMainLoop();
 	dropSoundEngine();
 	

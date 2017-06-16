@@ -14,12 +14,6 @@ OptionMenu::OptionMenu()
 	backButton->position = Vec3f(-4, -4, 0);
 	objects.push_back(backButton);
 
-	//GameObject* volumeCube = new GameObject();
-	//volumeCube->addComponent(new CubeComponent(0.1));
-	//volumeCube->addComponent(new SpinComponent(25, true, true, true));
-	//volumeCube->position = Vec3f(-4, 0.05, 0);
-	//objects.push_back(volumeCube);
-
 	GameObject* slider = new GameObject();
 	slider->addComponent(new SliderComponent(10, 1, 5));
 	slider->position = Vec3f(-4, 0, 0);

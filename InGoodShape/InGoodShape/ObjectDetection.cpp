@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <thread>
 #include <chrono>
+#include "Sound.h"
 
 cv::Mat src;
 cv::Mat gray;
@@ -141,12 +142,16 @@ int objectDetectTest()
 						arrowstring = "left";
 						shape = 3;
 						if (menuState == MAIN) menuState = _EXIT;
+						if (volume >= 10 && optionMenu != nullptr)
+							setVolume((volume -= 10) / 100.0f);
 					}
 					else if (arrowAngle < 1.25*CV_PI && arrowAngle > 0.75*CV_PI)
 					{
 						arrowstring = "right";
 						shape = 1;
 						if (menuState == MAIN) menuState = START;
+						if (volume <= 90 && optionMenu != nullptr)
+							setVolume((volume += 10) / 100.0f);
 					}
 					else if (pointOfArrow.y < middelPoint.y)
 					{
@@ -161,6 +166,8 @@ int objectDetectTest()
 						arrowstring = "down";
 						shape = 2;
 						if (menuState == MAIN) menuState = OPTIONS;
+						if (volume >= 10 && optionMenu != nullptr)
+							setVolume((volume -= 10) / 100.0f);
 					}
 						
 
