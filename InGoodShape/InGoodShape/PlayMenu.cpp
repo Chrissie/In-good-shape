@@ -1,8 +1,8 @@
 #include "MenuComponent.h"
 #include <GL/glew.h>
 #include "blobdetectionavans.h"
-#include "Main.h"
 #include <opencv2/imgproc/imgproc.hpp>
+#include "Main.h"
 #include "CubeComponent.h"
 #include "SpinComponent.h"
 #include "PyramidComponent.h"
@@ -137,11 +137,11 @@ void PlayMenu::drawCamera()
 	glEnable(GL_TEXTURE_2D);
 	glUseProgram(0);
 
-	glMatrixMode(GL_PROJECTION);
+	/*glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 1, 0, 1, -10, 10);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	glLoadIdentity();*/
 
 	//front
 	

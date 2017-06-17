@@ -34,6 +34,7 @@
 
 // GL includes
 #include "Main.h"
+#include "ImageProcessor.h"
 #include "Shader.h"
 #include "GameObject.h"
 #include "CubeComponent.h"
@@ -49,8 +50,6 @@
 #include "InstructionMenu.h"
 #include "PlayMenu.h"
 #include "OptionMenu.h"
-#include "Main.h"
-
 
 //sound
 #include "Sound.h"

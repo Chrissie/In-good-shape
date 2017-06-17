@@ -1,5 +1,6 @@
 #pragma once
 #include "Menu.h"
+#include <opencv2/core/mat.hpp>
 
 class Main;
 
