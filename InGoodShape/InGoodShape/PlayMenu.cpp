@@ -1,5 +1,4 @@
 #include "MenuComponent.h"
-#include <GL/glew.h>
 #include <Windows.h>
 #include "blobdetectionavans.h"
 #include "Main.h"
@@ -11,6 +10,7 @@
 #include "SpinComponent.h"
 #include "PyramidComponent.h"
 #include <iostream>
+#include <GL/glew.h>
 
 cv::Mat frame;
 
@@ -47,33 +47,6 @@ void PlayMenu::update()
 void PlayMenu::draw()
 {
 	drawCamera();
-}
-
-void PlayMenu::drawPureCamera()
-{
-	Main::BindCVMat2GLTexture(frame);
-	glEnable(GL_TEXTURE_2D);
-	glUseProgram(0);
-
-	glPushMatrix();
-	glTranslatef(-8, -6, -1.45);
-	glScaled(16, 12, 0);
-	glAlphaFunc(GL_LESS, 0.5);
-	glBegin(GL_QUADS);
-	//glColor4f(0, 0, 0, 0.5);
-	glTexCoord2f(0.0, 0.0);
-	glVertex3f(1.0, 1.0, 0);
-
-	glTexCoord2f(0.0, 1.0);
-	glVertex3f(1.0, 0.0, 0);
-
-	glTexCoord2f(1.0, 1.0);
-	glVertex3f(0.0, 0.0, 0);
-
-	glTexCoord2f(1.0, 0.0);
-	glVertex3f(0.0, 1.0, 0);
-	glEnd();
-	glPopMatrix();
 }
 
 void PlayMenu::drawCamera()

@@ -10,6 +10,5 @@ public:
 	virtual void update();
 	virtual void draw();
 	void drawCamera();
-	void drawPureCamera();
 };
 

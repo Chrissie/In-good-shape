@@ -47,6 +47,8 @@
 #include "PlayMenu.h"
 #include "OptionMenu.h"
 #include "Main.h"
+#include "ImageProcessor.h"
+#include <thread>
 
 //sound
 #include "Sound.h"
@@ -367,8 +369,8 @@ void display()
 			glReadPixels(520, 45, roi, roi, GL_BGR, GL_UNSIGNED_BYTE, pixels2);
 			cv::Mat screenShot2 = cv::Mat(roi, roi, CV_8UC3, pixels2);
 			flip(screenShot2, screenShot2, 0);
-			cv::imshow("screenshot2", screenShot2);
-			cv::imwrite("C:\\Users\\Christiaan\\Desktop\\screenshot2.bmp", screenShot2);
+			//cv::imshow("screenshot2", screenShot2);
+			cv::imwrite("camera.bmp", screenShot2);
 			delete pixels2;
 		}
 	}
@@ -413,9 +415,11 @@ void display()
 			cv::Mat screenShot = cv::Mat(roi, roi, CV_8UC3, pixels);
 			flip(screenShot, screenShot, 0);
 			//cv::imshow("screenshot", screenShot);
-			//cv::imwrite("C:\\Users\\Christiaan\\Desktop\\screenshot.bmp", screenShot);
+			cv::imwrite("object.bmp", screenShot);
+			//ImageProcessor::processImages(screenShot, camera);
 			delete pixels;			
 			cvscreen = 0;
+			ImageProcessor::startImageThread();
 		}
 		else
 		{
