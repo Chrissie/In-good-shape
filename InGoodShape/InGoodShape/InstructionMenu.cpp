@@ -23,10 +23,10 @@ InstructionMenu::InstructionMenu()
 	startButton->position = Vec3f(-400, 0, 0);
 	objects.push_back(startButton);
 
-	GameObject* saltyBitch = new GameObject();
-	saltyBitch->addComponent(new MenuComponent("When every surface of the shape is filled, you go to the next level.", 0.8f));
-	saltyBitch->position = Vec3f(-400, -2, 0);
-	objects.push_back(saltyBitch);
+	GameObject* instructionText = new GameObject();
+	instructionText->addComponent(new MenuComponent("When every surface of the shape is filled, you go to the next level.", 0.8f));
+	instructionText->position = Vec3f(-400, -2, 0);
+	objects.push_back(instructionText);
 
 	GameObject* title = new GameObject();
 	title->addComponent(new MenuComponent("INSTRUCTIONS", 2));

@@ -13,7 +13,6 @@ public:
 
 	void init() override;
 
-
 	bool xRot;
 	bool yRot;
 	bool zRot;
