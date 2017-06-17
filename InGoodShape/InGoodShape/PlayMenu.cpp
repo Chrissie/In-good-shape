@@ -105,16 +105,6 @@ void PlayMenu::update()
 
 void PlayMenu::draw()
 {
-	//for (auto &o : gameModel)
-	//{
-	//	glPushMatrix();
-	//	glTranslatef(0, 0, 0);
-	//	o->draw();
-	//	glPopMatrix();
-	//}
-
-
-
 	drawCamera();
 }
 
@@ -145,7 +135,7 @@ void PlayMenu::drawCamera()
 
 	//front
 	
-	glColor4f(1, 1, 1, 1);
+	glColor4f(1,1,1,1);
 	glPushMatrix();
 	glTranslatef(-8, -6, -1.5);
 	glScaled(16, 12, 1);

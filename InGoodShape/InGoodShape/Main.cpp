@@ -95,8 +95,8 @@ int volume = 100;
 MenuState menuState; //used to switch from menu
 bool levelComplete = false; // used to check if level is completed
 bool drawLevelComplete = false; // used to draw green checkmark if level is completed
-int filledPercentage = 0.0;	//used to calculate points
-int oldFilledPercentage = 0.0; //used to check if player improved previous fill
+int filledPercentage = 0;	//used to calculate points
+int oldFilledPercentage = 0; //used to check if player improved previous fill
 int area = 0; // used to calculate points
 
 //std::thread openCVThread(objectDetectTest);
@@ -458,13 +458,13 @@ void display()
 		}
 		count++;
 
-		if(playScreen != nullptr && o != objects.front() && o->getComponent<MenuComponent>() == nullptr)
+		/*if(playScreen != nullptr && o != objects.front() && o->getComponent<MenuComponent>() == nullptr)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		} else
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
+		}*/
 			
 
 		o->draw();
@@ -692,7 +692,7 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
-	//glutFullScreen();
+	glutFullScreen();
 	text->initText(width, height);
 
 	if (cvInit() && menuState == START)

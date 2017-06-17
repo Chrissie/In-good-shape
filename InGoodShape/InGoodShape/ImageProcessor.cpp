@@ -777,6 +777,7 @@ int labelBLOBsInfo(Mat binaryImage, Mat & labeledImage,
 
 int thres = 190;
 int key;
+bool mayUseThread = true;
 
 Mat createBwImage(Mat image)
 {
@@ -846,14 +847,23 @@ void ImageProcessor::processImages()
 		totalareaobjects += *it;
 	}
 
+	area = totalareaobjects;
+	filledPercentage = totalareaobjects*100 / totalarea;
+
 	cout << "\r\n counted " << count << " objects";
 	cout << "\r\n area of camera: " << totalarea << endl;
 	cout << "\r\n area of objects: " << totalareaobjects << endl;
 	cout << "\r\n that is: " << (double)totalareaobjects / (double)totalarea * 100.0 << "%";
+	mayUseThread = true;
 }
 
+std::thread thisThread;
 void ImageProcessor::startImageThread()
 {
-	std::thread thisThread(processImages);
-	thisThread.detach();
+	if (mayUseThread)
+	{
+		thisThread = thread(processImages);
+		thisThread.detach();
+		mayUseThread = false;
+	}
 }
