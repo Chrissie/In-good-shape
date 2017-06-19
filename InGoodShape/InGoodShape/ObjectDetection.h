@@ -12,4 +12,4 @@ static double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
 
 void setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour);
 
-void objectDetectTest();
+int objectDetectTest();

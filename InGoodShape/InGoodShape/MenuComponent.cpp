@@ -40,14 +40,11 @@ MenuComponent::~MenuComponent()
 
 void MenuComponent::update(float elapsedTime)
 {
-
 	if(mouseX != 0 || mouseY != 0)
 	{
-		//gameObject->position.x = pos;
 		pos = -pos;
 		mouseX = 0;
 		mouseY = 0;
-		//drawString();
 	}
 }
 

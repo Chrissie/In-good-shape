@@ -20,6 +20,8 @@
     <ClCompile Include="SliderComponent.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="ObjectDetection.cpp" />
+    <ClCompile Include="HouseComponent.cpp" />
+    <ClCompile Include="ImageProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Shader.h" />
@@ -41,6 +43,8 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="ObjectDetection.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="ImageProcessor.h" />
+    <ClInclude Include="HouseComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">

@@ -18,7 +18,7 @@ void CubeComponent::draw()
 {
 	glDisable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
-	glColor3f(1, 0, 0);
+	glColor4f(1, 0, 0, 0);
 	glVertex3f(-size, -size, -size);
 	glVertex3f(-size, -size, size);
 	glVertex3f(-size, size, size);
@@ -29,7 +29,7 @@ void CubeComponent::draw()
 	glVertex3f(size, size, size);
 	glVertex3f(size, size, -size);
 
-	glColor3f(0, 1, 0);
+	glColor4f(0, 1, 0, 0);
 	glVertex3f(-size, -size, -size);
 	glVertex3f(-size, -size, size);
 	glVertex3f(size, -size, size);
@@ -40,7 +40,7 @@ void CubeComponent::draw()
 	glVertex3f(size, size, size);
 	glVertex3f(size, size, -size);
 
-	glColor3f(0, 0, 1);
+	glColor4f(0, 0, 1, 0);
 	glVertex3f(-size, -size, -size);
 	glVertex3f(-size, size, -size);
 	glVertex3f(size, size, -size);

@@ -1,6 +1,19 @@
 #include "ObjectDetection.h"
 #include "math.h"
 #include <algorithm>
+#include "Main.h"
+#include <GL/glew.h>
+#include <thread>
+#include <chrono>
+#include "Sound.h"
+
+cv::Mat src;
+cv::Mat gray;
+cv::Mat bw;
+cv::Mat dst;
+std::vector<std::vector<cv::Point> > contours;
+std::vector<cv::Point> approx;
+
 
 /**
 * Helper function to find a cosine of angle between vectors
@@ -33,20 +46,18 @@ void setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& cont
 	cv::putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
 }
 
-void objectDetectTest()
+int objectDetectTest()
 {
-	cv::Mat src;
-	cv::Mat gray;
-	cv::Mat bw;
-	cv::Mat dst;
-	std::vector<std::vector<cv::Point> > contours;
-	std::vector<cv::Point> approx;
 
 	VideoCapture capture(0);
-	int q;
+	//int shape = -1;
 
-	while (cvWaitKey(30) != 'q')
+	//while (cvWaitKey(30) != 'q')
+	while(1)
 	{
+		//Sleep(500);
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		cvWaitKey(30);
 		capture >> src;
 		if (true)
 		{
@@ -61,7 +72,9 @@ void objectDetectTest()
 			// Find contours
 			cv::findContours(bw.clone(), contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
-			src.copyTo(dst);
+			if (contours.size() == 0) { continue; }
+
+			//src.copyTo(dst);
 
 			for (int i = 0; i < contours.size() - 1; i++)
 			{
@@ -120,24 +133,46 @@ void objectDetectTest()
 					}
 					*/
 
-
-
-
 					string arrowstring;
 					double arrowAngle = 0;
 					arrowAngle = acos((double)((pointOfArrow.x - middelPoint.x) /sortedDistances[6]));
 
 					if (arrowAngle < 0.25*CV_PI && arrowAngle > -0.25*CV_PI)
+					{
 						arrowstring = "left";
+						shape = 3;
+						if (menuState == MAIN) menuState = _EXIT;
+						if (volume >= 10 && optionMenu != nullptr)
+							setVolume((volume -= 10) / 100.0f);
+					}
 					else if (arrowAngle < 1.25*CV_PI && arrowAngle > 0.75*CV_PI)
+					{
 						arrowstring = "right";
+						shape = 1;
+						if (menuState == MAIN) menuState = START;
+						if (volume <= 90 && optionMenu != nullptr)
+							setVolume((volume += 10) / 100.0f);
+					}
 					else if (pointOfArrow.y < middelPoint.y)
+					{
 						arrowstring = "up";
+						shape = 0;
+						if (menuState == MAIN) menuState = INSTRUCTIONS;
+						else if (menuState == INSTRUCTIONS) menuState = MAIN;
+						else if (menuState == OPTIONS) menuState = MAIN;
+					}
 					else if (pointOfArrow.y > middelPoint.y)
+					{
 						arrowstring = "down";
+						shape = 2;
+						if (menuState == MAIN) menuState = OPTIONS;
+						if (volume >= 10 && optionMenu != nullptr)
+							setVolume((volume -= 10) / 100.0f);
+					}
+						
 
 					if (!isContourConvex(approx)) {
-						setLabel(dst, arrowstring, contours[i]);
+						setLabel(src, arrowstring, contours[i]);
 					}
 
 				}
@@ -148,7 +183,7 @@ void objectDetectTest()
 
 				if (approx.size() == 3)
 				{
-					setLabel(dst, "TRIANGLE", contours[i]);    // Triangles
+					//setLabel(src, "TRIANGLE", contours[i]);    // Triangles
 				}
 				else if (approx.size() >= 4 && approx.size() <= 6)
 				{
@@ -169,12 +204,22 @@ void objectDetectTest()
 
 					// Use the degrees obtained above and the number of vertices
 					// to determine the shape of the contour
+
 					if (vtc == 4)
-						setLabel(dst, "RECTANGLE", contours[i]);
+					{
+						shape = 4;
+						setLabel(src, "RECTANGLE", contours[i]);
+					}
 					else if (vtc == 5)
-						setLabel(dst, "PENTAGON", contours[i]);
+					{
+						shape = 5;
+						setLabel(src, "PENTAGON", contours[i]);
+					}
 					else if (vtc == 6)
-						setLabel(dst, "HEXAGON", contours[i]);
+					{
+						shape = 6;
+						setLabel(src, "HEXAGON", contours[i]);
+					}
 				}
 
 				else {
@@ -186,17 +231,27 @@ void objectDetectTest()
 
 					if (std::abs(1 - ((double)r.width / r.height)) <= 0.2 &&
 						std::abs(1 - (area / (CV_PI * (radius*radius)))) <= 0.2)
-						setLabel(dst, "CIRCLE", contours[i]);
+					{
+						setLabel(src, "CIRCLE", contours[i]);
+						if (playScreen == nullptr)
+							Main::switchMenu();
+						if(playScreen != nullptr)
+							canRotate = !canRotate;
+					}
 				}
 			}
 			
 			cv::imshow("src", src);
-			cv::imshow("dst", dst);
+			//cv::imshow("dst", dst);
 
 		}
-		else
-		{
-			break;
-		}
+		//shape = 99999;
+		cout << shape << endl;
+		//return shape;
+			//else
+			//{
+			//	break;
+			//}
 	}
+	return -1;
 }
