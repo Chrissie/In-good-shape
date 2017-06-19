@@ -8,11 +8,16 @@
 OptionMenu::OptionMenu()
 {
 	GameObject* backButton = new GameObject();
-	backButton->addComponent(new CubeComponent(0.5));
+	backButton->addComponent(new CubeComponent(0.5, 1));
 	backButton->addComponent(new SpinComponent(25));
 	backButton->addComponent(new MenuComponent("BACK"));
 	backButton->position = Vec3f(-4, -4, 0);
 	objects.push_back(backButton);
+
+	GameObject* volume = new GameObject();
+	volume->addComponent(new MenuComponent("Volume", 0.8f));
+	volume->position = Vec3f(-450, 2, 0);
+	objects.push_back(volume);
 
 	GameObject* slider = new GameObject();
 	slider->addComponent(new SliderComponent(10, 1, 5));

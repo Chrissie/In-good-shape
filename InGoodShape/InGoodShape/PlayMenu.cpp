@@ -21,11 +21,10 @@ int currentLevel;
 
 PlayMenu::PlayMenu()
 {
-	
-	GameObject* title = new GameObject();
-	title->addComponent(new MenuComponent("IN GOOD SHAPE"));
-	title->position = ::Vec3f(-400, 4, 0);
-	objects.push_back(title);
+	//GameObject* title = new GameObject();
+	//title->addComponent(new MenuComponent("IN GOOD SHAPE"));
+	//title->position = ::Vec3f(-400, 4, 0);
+	//objects.push_back(title);
 
 	levelObject = new GameObject();
 	levelObject->addComponent(new MenuComponent("Level: " + std::to_string(level), 0.5));
@@ -43,7 +42,7 @@ PlayMenu::PlayMenu()
 	objects.push_back(totalScoreObject);
 
 	percentageObject = new GameObject();
-	percentageObject->addComponent(new MenuComponent("Filled:" + std::to_string(oldFilledPercentage) + "%", 0.5));
+	percentageObject->addComponent(new MenuComponent("Filled: " + std::to_string(oldFilledPercentage) + "%", 0.5));
 	percentageObject->position = ::Vec3f(860, 3.5, 0);
 	objects.push_back(percentageObject);
 
@@ -61,7 +60,7 @@ void PlayMenu::switchLevel()
 	if(level == 1)
 	{
 		GameObject* cube = new GameObject();
-		cube->addComponent(new CubeComponent(1.5));
+		cube->addComponent(new CubeComponent(1.5, 0));
 		cube->position = ::Vec3f(0, -1, 0);
 		objects.push_back(cube);
 	}
@@ -69,7 +68,7 @@ void PlayMenu::switchLevel()
 	{
 		objects.pop_back();
 		GameObject* pyramid = new GameObject();
-		pyramid->addComponent(new PyramidComponent(2, 3));
+		pyramid->addComponent(new PyramidComponent(2, 3, 0));
 		pyramid->position = ::Vec3f(0, -0.7, 0);
 		objects.push_back(pyramid);
 	}
@@ -77,7 +76,7 @@ void PlayMenu::switchLevel()
 	{
 		objects.pop_back();
 		GameObject* house = new GameObject();
-		house->addComponent(new HouseComponent(1.5, 1.5, 2.5));
+		house->addComponent(new HouseComponent(1.5, 1.5, 2.5, 0));
 		house->position = ::Vec3f(0, -0.5, 0);
 		objects.push_back(house);
 	}
@@ -94,7 +93,7 @@ void PlayMenu::update()
 	if (totalScoreObject->getComponent<MenuComponent>() != nullptr)
 		totalScoreObject->getComponent<MenuComponent>()->title = "Total score: " + to_string(totalPoints);
 	if (percentageObject->getComponent<MenuComponent>() != nullptr)
-		percentageObject->getComponent<MenuComponent>()->title = "Filled:" + std::to_string(oldFilledPercentage) + "%";
+		percentageObject->getComponent<MenuComponent>()->title = "Filled: " + std::to_string(oldFilledPercentage) + "%";
 
 	if(currentLevel != level)
 	{
@@ -151,7 +150,20 @@ void PlayMenu::drawCamera()
 
 	glTexCoord2f(1.0, 0.0);
 	glVertex3f(0.0, 1.0, 0);
+
 	glEnd();
 	glPopMatrix();
 
+	glDisable(GL_TEXTURE_2D);
+	//cube behind score text
+	glColor4f(0, 0, 0, 1.0f);
+	glPushMatrix();
+	glTranslatef(0, 0, -1.0);
+	glBegin(GL_QUADS);
+	glVertex3f(6, 5.7, 0);
+	glVertex3f(12, 5.7, 0);
+	glVertex3f(12, 3, 0);
+	glVertex3f(6, 3, 0);
+	glEnd();
+	glPopMatrix();
 }

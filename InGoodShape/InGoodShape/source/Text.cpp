@@ -137,6 +137,7 @@ void Text::initText(int width, int height)
 
 void Text::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
+	glEnable(GL_BLEND);
 	// Activate corresponding render state	
 	shader->use();
 	glUniform3f(glGetUniformLocation(shader->ID, "textColor"), color.x, color.y, color.z);

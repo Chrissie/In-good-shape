@@ -795,66 +795,70 @@ Mat createThresholdImage(Mat image)
 
 void ImageProcessor::processImages()
 {
-	Mat object = imread("object.bmp");
-	Mat camera = imread("camera.bmp");
-	double dWidth = object.cols;
-	double dHeight = object.rows;
+		Mat object = imread("object.bmp");
+		Mat camera = imread("camera.bmp");
+		double dWidth = object.cols;
+		double dHeight = object.rows;
 
-	Mat imageToCount;
-	
-	thres = 190;
+		Mat imageToCount;
 
-	cout << "\r\n counting objects...";
-	imageToCount = createThresholdImage(createBwImage(object));
+		thres = 190;
 
-	Mat binary16S;
-	imageToCount.convertTo(binary16S, CV_16S);
-	Mat labelImg;
+		cout << "\r\n counting objects...";
+		imageToCount = createThresholdImage(createBwImage(object));
 
-	vector<Point2d*> firstpixelvec;
-	vector<Point2d*> pointvec;
-	vector<int> areavec;
+		Mat binary16S;
+		imageToCount.convertTo(binary16S, CV_16S);
+		Mat labelImg;
 
-	labelBLOBsInfo(binary16S, labelImg, firstpixelvec, pointvec, areavec);
+		vector<Point2d*> firstpixelvec;
+		vector<Point2d*> pointvec;
+		vector<int> areavec;
 
-	int totalarea = 0;
-	for (vector<int>::iterator it = areavec.begin(); it != areavec.end(); ++it)
-	{
-		totalarea += *it;
-	}
+		labelBLOBsInfo(binary16S, labelImg, firstpixelvec, pointvec, areavec);
 
-	//
-	//Now the area for the BLOB objects is calculated
-	//
+		int totalarea = 0;
+		for (vector<int>::iterator it = areavec.begin(); it != areavec.end(); ++it)
+		{
+			totalarea += *it;
+		}
 
-	firstpixelvec.clear();
-	pointvec.clear();
-	areavec.clear();
+		//
+		//Now the area for the BLOB objects is calculated
+		//
 
-	thres = 35;
+		firstpixelvec.clear();
+		pointvec.clear();
+		areavec.clear();
 
-	cout << "\r\n counting objects...";
-	imageToCount = createThresholdImage(createBwImage(object));
+		thres = 35;
 
-	imageToCount.convertTo(binary16S, CV_16S);
-	int count = 0;
+		cout << "\r\n counting objects...";
+		imageToCount = createThresholdImage(createBwImage(object));
 
-	count = labelBLOBsInfo(binary16S, labelImg, firstpixelvec, pointvec, areavec);
+		imageToCount.convertTo(binary16S, CV_16S);
+		int count = 0;
 
-	int totalareaobjects = 0;
-	for (vector<int>::iterator it = areavec.begin(); it != areavec.end(); ++it)
-	{
-		totalareaobjects += *it;
-	}
+		count = labelBLOBsInfo(binary16S, labelImg, firstpixelvec, pointvec, areavec);
 
-	area = totalareaobjects;
-	filledPercentage = totalareaobjects*100 / totalarea;
+		int totalareaobjects = 0;
+		for (vector<int>::iterator it = areavec.begin(); it != areavec.end(); ++it)
+		{
+			totalareaobjects += *it;
+		}
 
-	cout << "\r\n counted " << count << " objects";
-	cout << "\r\n area of camera: " << totalarea << endl;
-	cout << "\r\n area of objects: " << totalareaobjects << endl;
-	cout << "\r\n that is: " << (double)totalareaobjects / (double)totalarea * 100.0 << "%";
-	mayUseThread = true;
+		if (!canRotate)
+		{
+			area = totalareaobjects;
+			if(totalarea > 0)
+				filledPercentage = totalareaobjects * 100 / totalarea;
+		}
+
+		cout << "\r\n counted " << count << " objects";
+		cout << "\r\n area of camera: " << totalarea << endl;
+		cout << "\r\n area of objects: " << totalareaobjects << endl;
+		cout << "\r\n that is: " << (double)totalareaobjects / (double)totalarea * 100.0 << "%";
+		mayUseThread = true;
 }
 
 std::thread thisThread;
