@@ -107,7 +107,7 @@ Text* text;
 Menu menu;
 MainMenu* mainMenu;
 InstructionMenu* instructionMenu;
-PlayMenu* playScreen;
+PlayMenu* playScreen = nullptr;
 OptionMenu* optionMenu;
 
 bool selectedButtons[10];
@@ -421,8 +421,8 @@ void display()
 		0, 0, 0,
 		0, 1, 0);
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
@@ -444,6 +444,9 @@ void display()
 		}
 	}
 
+	if (drawLevelComplete)
+		handleLevelComplete();
+
 	int count = 0;
 	for (auto &o : objects)
 	{
@@ -458,20 +461,18 @@ void display()
 		}
 		count++;
 
-		/*if(playScreen != nullptr && o != objects.front() && o->getComponent<MenuComponent>() == nullptr)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		} else
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}*/
-			
+		//if(playScreen != nullptr && o != objects.front() && o->getComponent<MenuComponent>() == nullptr)
+		//{
+		//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//} else
+		//{
+		//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//}
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL );
 
 		o->draw();
 	}
-
-	if (drawLevelComplete)
-		handleLevelComplete();
 
 
 	if (playScreen)
@@ -526,12 +527,21 @@ void display()
 	{
 		glutSwapBuffers();
 	}
+
+	//for (auto &o : objects)
+	//{
+	//	if (o->getComponent<MenuComponent>() != nullptr)
+	//	{
+	//		MenuComponent * menuComponent = o->getComponent<MenuComponent>();
+	//		menuComponent->draw();
+	//	}
+	//}
 }
 
 void Main::switchMenu()
 {
-	for (int i = 0; i < sizeof(selectedButtons); i++)
-		selectedButtons[i] = false;
+	menu.deselectButtons();
+	shape = -1;
 	cout << "SwitchMenu" << endl;
 	switch (menuState)
 	{
@@ -550,6 +560,8 @@ void Main::switchMenu()
 		{
 			delete mainMenu; 
 			mainMenu = nullptr; 
+			delete optionMenu;
+			optionMenu = nullptr;
 			instructionMenu = new InstructionMenu();
 		}
 		break;
@@ -566,6 +578,8 @@ void Main::switchMenu()
 		{
 			delete mainMenu;
 			mainMenu = nullptr;
+			delete instructionMenu;
+			instructionMenu = nullptr;
 			optionMenu = new OptionMenu();
 		}
 		break;
@@ -579,18 +593,18 @@ void Main::switchMenu()
 void idle()
 {
 	//int shape = objectDetectTest();
-	switch(shape)
-	{
-	case 0: menu.selectButton(0); std::cout << "selected 1" << std::endl;
-		break;
-	case 1: menu.selectButton(1); cout << "selected 2" << endl;
-		break;
-	case 2: menu.selectButton(2); cout << "selected 3" << endl;
-		break;
-	case 3: menu.selectButton(3); cout << "selected 4" << endl;
-		break;
-	default: break;
-	}
+	//switch(shape)
+	//{
+	//case 0: menu.selectButton(0); std::cout << "selected 1" << std::endl;
+	//	break;
+	//case 1: menu.selectButton(1); cout << "selected 2" << endl;
+	//	break;
+	//case 2: menu.selectButton(2); cout << "selected 3" << endl;
+	//	break;
+	//case 3: menu.selectButton(3); cout << "selected 4" << endl;
+	//	break;
+	//default: break;
+	//}
 
 	if (cap.read(frame))
 	{
@@ -610,51 +624,60 @@ void idle()
 	int max = 270;
 	if (canRotate)
 	{
+		if (playScreen != nullptr && shape >=0 && shape <=3)
+			rotationspeed = 200;
+		else
+			rotationspeed = 50;
 		if (keys['w'] || shape == 0)
 		{ //-
 			rotationX -= deltaTime * rotationspeed;
-			cout << rotationY << endl;
 		}
 		if (keys['s'] || shape == 2)
 		{//+
 			rotationX += deltaTime * rotationspeed;
-			cout << rotationY << endl;
 		}
 		if (keys['a'] || shape == 3)
 		{ //-
 			rotationY -= deltaTime * rotationspeed;
-			cout << rotationX << endl;
 		}
 		if (keys['d'] || shape == 1)
 		{ //+
 			rotationY += deltaTime * rotationspeed;
-			cout << rotationX << endl;
-
 		}
+		shape = -1;
+	}
+
+	if(oldFilledPercentage >= 75.0 && !drawLevelComplete)
+	{
+		drawLevelComplete = true;
+		SFXSwitch1();
 	}
 
 	if (keys['n'])
-		if(level < 3 && oldFilledPercentage >= 75.0)
-			level++;
-	//if (keys['m'])
-	//	level=2;
+		if (oldFilledPercentage >= 75.0)
+			levelComplete = true;
 
 	if (filledPercentage > oldFilledPercentage)
 	{
 		oldFilledPercentage = filledPercentage;
-		points =  area/1000 * oldFilledPercentage;
+		points =  area/100000.0f * oldFilledPercentage;
 	}
-
 
 	if(levelComplete)
 	{
 		levelComplete = false;
-		SFXSwitch1();
-		drawLevelComplete = true;
+		drawLevelComplete = false;
 		totalPoints += points;
 		points = 0;
-		filledPercentage = 0.0;
-		oldFilledPercentage = 0.0;
+		if(level < 3)
+		{
+			level++;
+			filledPercentage = 0.0;
+			oldFilledPercentage = 0.0;
+			canRotate = true;
+		}
+		if(level > 3)
+			SFXSwitch2();
 	}
 
 	for (auto &o : objects)
@@ -692,7 +715,7 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("IN GOOD SHAPE");
-	glutFullScreen();
+	//glutFullScreen();
 	text->initText(width, height);
 
 	if (cvInit() && menuState == START)
@@ -716,8 +739,8 @@ int main(int argc, char* argv[])
 	init();
 
 	//comment next 2 lines to turn of object detection
-	//std::thread openCVThread(objectDetectTest);
-	//openCVThread.detach();
+	std::thread openCVThread(objectDetectTest);
+	openCVThread.detach();
 
 	glutMainLoop();
 	dropSoundEngine();

@@ -15,6 +15,7 @@ public:
 	Menu();
 	~Menu();
 	void selectButton(int buttonID);
+	void deselectButtons();
 	void draw();
 	void update();
 };

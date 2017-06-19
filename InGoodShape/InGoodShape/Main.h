@@ -19,6 +19,7 @@ extern bool isFilled[20];
 extern int shape;
 extern int volume;
 enum MenuState { MAIN, INSTRUCTIONS, START, OPTIONS, _EXIT };
+extern Menu menu;
 extern MenuState menuState;
 extern MainMenu* mainMenu;
 extern PlayMenu* playScreen;

@@ -5,8 +5,9 @@
 class CubeComponent : public DrawComponent
 {
 	float size;
+	int alfa;
 public:
-	CubeComponent(float size);
+	CubeComponent(float size, int alfa);
 	~CubeComponent();
 
 	virtual void draw() override;

@@ -50,7 +50,7 @@ void SFXClick5() { engine->play2D("MusicFiles/SoundEffects/click5.wav", false); 
 
 // Predefined sound effects
 void SFXSwitch1() { engine->play2D("MusicFiles/SoundEffects/levelComplete.mp3", false); }
-void SFXSwitch2() { engine->play2D("MusicFiles/SoundEffects/switch2.wav", false); }
+void SFXSwitch2() { backgroundMusic->stop(); engine->play2D("MusicFiles/SoundEffects/Complete.mp3", false); backgroundMusic = engine->play2D("MusicFiles/BackgroundMusic/sandstorm.mp3", true, false, true); }
 void SFXSwitch3() { engine->play2D("MusicFiles/SoundEffects/switch3.wav", false); }
 void SFXSwitch4() { engine->play2D("MusicFiles/SoundEffects/switch4.wav", false); }
 void SFXSwitch5() { engine->play2D("MusicFiles/SoundEffects/switch5.wav", false); }

@@ -8,7 +8,7 @@
 MainMenu::MainMenu()
 {
 	GameObject* instructionButton = new GameObject();
-	instructionButton->addComponent(new CubeComponent(0.5));
+	instructionButton->addComponent(new CubeComponent(0.5, 1));
 	instructionButton->addComponent(new SpinComponent(25));
 	instructionButton->addComponent(new MenuComponent("INSTRUCTIONS"));
 	instructionButton->position = Vec3f(-4, 2, 0);
@@ -16,21 +16,21 @@ MainMenu::MainMenu()
 
 
 	GameObject* startButton = new GameObject();
-	startButton->addComponent(new CubeComponent(0.5));
+	startButton->addComponent(new CubeComponent(0.5, 1));
 	startButton->addComponent(new SpinComponent(25));
 	startButton->addComponent(new MenuComponent("START"));
 	startButton->position = Vec3f(-4, 0, 0);
 	objects.push_back(startButton);
 
 	GameObject* optionsButton = new GameObject();
-	optionsButton->addComponent(new CubeComponent(0.5));
+	optionsButton->addComponent(new CubeComponent(0.5, 1));
 	optionsButton->addComponent(new SpinComponent(25));
 	optionsButton->addComponent(new MenuComponent("OPTIONS"));
 	optionsButton->position = Vec3f(-4, -2, 0);
 	objects.push_back(optionsButton);
 
 	GameObject* exitButton = new GameObject();
-	exitButton->addComponent(new CubeComponent(0.5));
+	exitButton->addComponent(new CubeComponent(0.5, 1));
 	exitButton->addComponent(new SpinComponent(25));
 	exitButton->addComponent(new MenuComponent("EXIT"));
 	exitButton->position = Vec3f(-4, -4, 0);

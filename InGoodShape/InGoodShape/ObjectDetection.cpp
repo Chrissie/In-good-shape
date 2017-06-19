@@ -67,7 +67,7 @@ int objectDetectTest()
 			// Use Canny instead of threshold to catch squares with gradient shading
 			blur(gray, bw, Size(3, 3));
 			cv::Canny(gray, bw, 80, 240, 3);
-			cv::imshow("bw", bw);
+			//cv::imshow("bw", bw);
 
 			// Find contours
 			cv::findContours(bw.clone(), contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
@@ -141,6 +141,7 @@ int objectDetectTest()
 					{
 						arrowstring = "left";
 						shape = 3;
+						menu.selectButton(3);
 						if (menuState == MAIN) menuState = _EXIT;
 						if (volume >= 10 && optionMenu != nullptr)
 							setVolume((volume -= 10) / 100.0f);
@@ -149,6 +150,7 @@ int objectDetectTest()
 					{
 						arrowstring = "right";
 						shape = 1;
+						menu.selectButton(1);
 						if (menuState == MAIN) menuState = START;
 						if (volume <= 90 && optionMenu != nullptr)
 							setVolume((volume += 10) / 100.0f);
@@ -157,6 +159,7 @@ int objectDetectTest()
 					{
 						arrowstring = "up";
 						shape = 0;
+						menu.selectButton(0);
 						if (menuState == MAIN) menuState = INSTRUCTIONS;
 						else if (menuState == INSTRUCTIONS) menuState = MAIN;
 						else if (menuState == OPTIONS) menuState = MAIN;
@@ -165,12 +168,12 @@ int objectDetectTest()
 					{
 						arrowstring = "down";
 						shape = 2;
+						menu.selectButton(2);
 						if (menuState == MAIN) menuState = OPTIONS;
 						if (volume >= 10 && optionMenu != nullptr)
 							setVolume((volume -= 10) / 100.0f);
 					}
 						
-
 					if (!isContourConvex(approx)) {
 						setLabel(src, arrowstring, contours[i]);
 					}
@@ -220,10 +223,7 @@ int objectDetectTest()
 						shape = 6;
 						setLabel(src, "HEXAGON", contours[i]);
 					}
-				}
-
-				else {
-
+				} else {
 					// Detect and label circles
 					double area = cv::contourArea(contours[i]);
 					cv::Rect r = cv::boundingRect(contours[i]);
@@ -236,12 +236,14 @@ int objectDetectTest()
 						if (playScreen == nullptr)
 							Main::switchMenu();
 						if(playScreen != nullptr)
-							canRotate = !canRotate;
+							canRotate = false;
+						if(playScreen != nullptr && !canRotate && oldFilledPercentage >= 75.0)
+							levelComplete = true;
 					}
 				}
 			}
 			
-			cv::imshow("src", src);
+			//cv::imshow("src", src);
 			//cv::imshow("dst", dst);
 
 		}

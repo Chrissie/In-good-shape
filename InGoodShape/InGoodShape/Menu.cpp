@@ -16,6 +16,13 @@ void Menu::selectButton(int buttonID)
 	selectedButtons[buttonID] = true;
 }
 
+void Menu::deselectButtons()
+{
+	for (int i = 0; i < sizeof(selectedButtons); i++)
+		selectedButtons[i] = false;
+}
+
+
 void Menu::draw()
 {
 
